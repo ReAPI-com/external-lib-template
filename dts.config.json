@@ -1,0 +1,24 @@
+{
+  "compilationOptions": {
+    "followSymlinks": true,
+    "preferredConfigPath": "./tsconfig.json"
+  },
+  "entries": [
+    {
+      "filePath": "./src/index.ts",
+      "outFile": "./dist/bundle.d.ts",
+      "libraries": {
+        "inlinedLibraries": [
+          "@turf/helpers",
+          "geojson"
+        ]
+      },
+      "output": {
+        "inlineDeclareGlobals": true,
+        "inlineDeclareExternals": false,
+        "exportReferencedTypes": true,
+        "noBanner": true
+      }
+    }
+  ]
+}
