@@ -2,7 +2,7 @@
 
 This template demonstrates how to create a custom library for ReAPI scripts with proper TypeScript support and bundling.
 
-## Key Points
+## Implementation Guide
 
 ### 1. Bundle Name Configuration
 
@@ -55,8 +55,11 @@ The project uses `dts-bundle-generator` to bundle TypeScript declarations. Key c
 
 This configuration:
 
-- Bundles type definitions from dependencies
+- Bundles type definitions from dependencies into your final `bundle.d.ts`
 - Ensures proper type declaration tree-shaking
+- **Important**: The `inlinedLibraries` array must include any packages whose type definitions you want to be included in your final bundle. For example:
+  - If your library depends on turf.js, you need to include `"@turf/helpers"` and `"geojson"` as they contain the required type definitions
+  - Without listing dependencies here, their type definitions won't be available in your bundled `bundle.d.ts` file
 
 ## Getting Started
 
@@ -109,6 +112,14 @@ After deploying your library, you can use it in ReAPI scripts:
 const result = $$CustomLib.yourFunction();
 const value = $$CustomLib.yourClass.someFunction();
 ```
+
+### Usage in ReAPI Test Components
+
+Your external library can be utilized in ReAPI's test components:
+
+- **Custom Assertion Functions**: Create custom assertions using your library's validation logic
+- **Value Generators/Transformers**: Generate test data or transform API responses
+- **API Hooks**: Enhance request/response handling in pre and post hooks
 
 ## Development Tips
 
