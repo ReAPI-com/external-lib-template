@@ -101,7 +101,9 @@ npm publish
 
 4. Enable the library in ReAPI's UI.
 
-5. Your library is now ready to use in ReAPI scripts!
+5. **Important**: You might need to reload the ReAPI web page to ensure the new library URLs take effect.
+
+6. Your library is now ready to use in ReAPI scripts!
 
 ## Usage in ReAPI Scripts
 
@@ -138,8 +140,8 @@ Always thoroughly test your library before publishing:
 
 ```typescript
 // src/__tests__/yourFunction.test.ts
-describe('yourFunction', () => {
-  it('should work as expected', () => {
+describe("yourFunction", () => {
+  it("should work as expected", () => {
     const result = yourFunction();
     expect(result).toBe(expectedValue);
   });
@@ -147,6 +149,7 @@ describe('yourFunction', () => {
 ```
 
 Run tests with:
+
 ```bash
 npm test
 ```
@@ -167,7 +170,7 @@ declare global {
   const $$CustomLib: {
     // Manually specify your types here
     YourClass: {
-      new(): {
+      new (): {
         someMethod(): void;
       };
     };
