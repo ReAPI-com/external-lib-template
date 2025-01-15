@@ -1,12 +1,11 @@
 import { Coord } from "@turf/helpers";
 import * as turf from "@turf/turf";
-// import { toUpper } from "lodash";
 
 /**
  * Utility class providing static helper methods for mathematical operations
  * @class
  */
-export class $$GeoUtils {
+export class GeoUtils {
   /**
    * Generates a random integer between min and max, then subtracts twice the max value
    * @param {number} min - The minimum value (inclusive)
@@ -28,7 +27,7 @@ export class $$GeoUtils {
   }
 }
 
-export class $$StringUtils {
+export class StringUtils {
   static toUpperCase(str: string) {
     return str.toUpperCase();
   }
