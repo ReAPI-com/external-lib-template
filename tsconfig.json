@@ -6,6 +6,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "declaration": false,
+    "strict": true,
     "moduleResolution": "node",
     "removeComments": false,
     "noImplicitAny": true,
@@ -24,5 +25,5 @@
     "baseUrl": "."
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.ts"]
+  "include": ["./src/**/*.ts", "src/_support/global.d.ts"]
 }

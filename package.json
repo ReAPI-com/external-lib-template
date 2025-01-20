@@ -1,6 +1,6 @@
 {
   "name": "@reapi/test-external-lib",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Example of how to create an external library for the ReAPI API testing platform",
   "main": "dist/bundle.umd.js",
   "type": "module",
@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "build": "npm run clean && rollup -c && pnpm build:type",
     "build:type": "dts-bundle-generator --config dts.config.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "publishConfig": {
     "access": "public"
@@ -25,6 +25,7 @@
     "@turf/helpers": "^7.2.0",
     "@turf/turf": "^7.2.0",
     "@types/lodash": "^4.17.13",
+    "dayjs": "^1.11.13",
     "dts-bundle-generator": "^9.5.1",
     "lodash": "^4.17.21",
     "rimraf": "^6.0.1",
@@ -34,5 +35,8 @@
     "terser": "^5.37.0",
     "tslib": "^2.8.1",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.2"
   }
 }
