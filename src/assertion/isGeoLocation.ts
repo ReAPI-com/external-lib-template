@@ -45,4 +45,6 @@ export const isGeoLocationAssertion: AssertionFunction = {
   id: "reapi-is-geo-location",
   noOfParams: 1,
   function: isGeoLocation,
+  enabled: true,
+  tested: true,
 };

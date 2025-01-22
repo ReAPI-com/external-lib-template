@@ -14,4 +14,6 @@ export const modifyRequestParamsHook: ApiHook = {
   description: "Modify the request params",
   type: "beforeRequest",
   function: modifyRequestParams,
+  enabled: true,
+  tested: true,
 };

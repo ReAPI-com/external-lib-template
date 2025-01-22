@@ -20,4 +20,6 @@ export const isIntAssertion: AssertionFunction = {
   id: "reapi-is-int",
   noOfParams: 1,
   function: isInt,
+  enabled: true,
+  tested: true,
 };

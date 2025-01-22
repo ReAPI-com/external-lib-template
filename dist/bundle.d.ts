@@ -28,6 +28,8 @@ declare global {
 	interface AssertionFunction {
 		id: string;
 		deprecated?: boolean;
+		tested: boolean;
+		enabled: boolean;
 		noOfParams: number; // only 1, 2
 		function: Function;
 		displayName?: string;
@@ -36,6 +38,8 @@ declare global {
 	interface ValueFunction {
 		id: string;
 		deprecated?: boolean;
+		tested: boolean;
+		enabled: boolean;
 		function: Function;
 		displayName?: string;
 		description?: string;
@@ -43,6 +47,8 @@ declare global {
 	interface ApiHook {
 		id: string;
 		deprecated?: boolean;
+		tested: boolean;
+		enabled: boolean;
 		displayName: string;
 		description?: string;
 		type: "beforeRequest" | "afterRequest";
@@ -61,6 +67,7 @@ declare global {
 		headers: Record<string, any>;
 		data?: Record<string, any> | null | undefined;
 	}
+	type Json = Record<string, any>;
 	const $request: ApiRequest;
 	const $response: ApiResponse;
 	const $context: Record<string, any>;
@@ -251,10 +258,19 @@ declare global {
 		GeoUtils: typeof GeoUtils;
 		StringUtils: typeof StringUtils;
 		NumberUtils: typeof NumberUtils;
+		$$AssertionFunctions: AssertionFunction[];
+		$$ValueFunctions: ValueFunction[];
+		$$ApiHooks: ApiHook[];
+		getAssertionFunction: (id: string) => Function | undefined;
+		getValueFunction: (id: string) => Function | undefined;
+		getApiHook: (id: string) => Function | undefined;
 	};
 }
 export declare const $$AssertionFunctions: AssertionFunction[];
 export declare const $$ValueFunctions: ValueFunction[];
 export declare const $$ApiHooks: ApiHook[];
+export declare const getAssertionFunction: (id: string) => Function;
+export declare const getValueFunction: (id: string) => Function;
+export declare const getApiHook: (id: string) => Function;
 
 export {};

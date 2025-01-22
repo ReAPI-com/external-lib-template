@@ -29,6 +29,8 @@ declare global {
   interface AssertionFunction {
     id: string;
     deprecated?: boolean;
+    tested: boolean;
+    enabled: boolean;
     noOfParams: number; // only 1, 2
     function: Function;
     displayName?: string;
@@ -38,6 +40,8 @@ declare global {
   interface ValueFunction {
     id: string;
     deprecated?: boolean;
+    tested: boolean;
+    enabled: boolean;
     function: Function;
     displayName?: string;
     description?: string;
@@ -46,6 +50,8 @@ declare global {
   interface ApiHook {
     id: string;
     deprecated?: boolean;
+    tested: boolean;
+    enabled: boolean;
     displayName: string;
     description?: string;
     type: "beforeRequest" | "afterRequest";
@@ -66,6 +72,8 @@ declare global {
     headers: Record<string, any>;
     data?: Record<string, any> | null | undefined;
   }
+
+  type Json = Record<string, any>;
 
   const $request: ApiRequest;
   const $response: ApiResponse;

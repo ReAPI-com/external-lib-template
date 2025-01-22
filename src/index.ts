@@ -13,6 +13,14 @@ declare global {
     GeoUtils: typeof GeoUtils;
     StringUtils: typeof StringUtils;
     NumberUtils: typeof NumberUtils;
+
+    $$AssertionFunctions: AssertionFunction[];
+    $$ValueFunctions: ValueFunction[];
+    $$ApiHooks: ApiHook[];
+
+    getAssertionFunction: (id: string) => Function | undefined;
+    getValueFunction: (id: string) => Function | undefined;
+    getApiHook: (id: string) => Function | undefined;
   };
 }
 
@@ -25,12 +33,26 @@ const $$ValueFunctions = [
 
 const $$ApiHooks = [modifyRequestParamsHook, modifyResponseDataHook];
 
+const getAssertionFunction = (id: string) => {
+  return $$AssertionFunctions.find((fn) => fn.id === id)?.function;
+};
+
+const getValueFunction = (id: string) => {
+  return $$ValueFunctions.find((fn) => fn.id === id)?.function;
+};
+
+const getApiHook = (id: string) => {
+  return $$ApiHooks.find((fn) => fn.id === id)?.function;
+};
+
 export {
   $$ApiHooks,
   $$AssertionFunctions,
   $$ValueFunctions,
   GeoUtils,
   NumberUtils,
-  StringUtils
+  StringUtils,
+  getApiHook,
+  getAssertionFunction,
+  getValueFunction,
 };
-

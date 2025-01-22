@@ -16,11 +16,15 @@ export const dateTimeTransformerFunctions: ValueFunction[] = [
     displayName: "Date Time From Timestamp",
     description: "Get the date and time from a timestamp",
     function: dateTimeFromTimestamp,
+    enabled: true,
+    tested: false,
   },
   {
     id: "reapi-format-date-time",
     displayName: "Format Date Time",
     description: "Format a date and time",
     function: formatDateTime,
+    enabled: false,
+    tested: false,
   },
 ];

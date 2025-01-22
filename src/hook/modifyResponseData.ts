@@ -11,4 +11,6 @@ export const modifyResponseDataHook: ApiHook = {
   description: "Modify the response data",
   type: "afterRequest",
   function: modifyResponseData,
+  enabled: true,
+  tested: true,
 };
