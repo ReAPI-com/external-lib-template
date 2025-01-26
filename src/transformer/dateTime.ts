@@ -18,6 +18,7 @@ export const dateTimeTransformerFunctions: ValueFunction[] = [
     function: dateTimeFromTimestamp,
     enabled: true,
     tested: false,
+    noOfParams: 1,
   },
   {
     id: "reapi-format-date-time",
@@ -26,5 +27,6 @@ export const dateTimeTransformerFunctions: ValueFunction[] = [
     function: formatDateTime,
     enabled: false,
     tested: false,
+    noOfParams: 1,
   },
 ];

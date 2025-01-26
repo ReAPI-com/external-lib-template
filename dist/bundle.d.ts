@@ -41,6 +41,9 @@ declare global {
 		tested: boolean;
 		enabled: boolean;
 		function: Function;
+		// accept 0 or 1 params. For complex options, use { options }
+		// default is 1
+		noOfParams: 0 | 1;
 		displayName?: string;
 		description?: string;
 	}

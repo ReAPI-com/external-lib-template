@@ -1,3 +1,4 @@
+import { isGeoLocationAssertion } from "./assertion/isGeoLocation";
 import { isIntAssertion } from "./assertion/isInt";
 import { dateTimeGeneratorFunctions } from "./generator/dateTime";
 import { modifyRequestParamsHook } from "./hook/modifyRequestParams";
@@ -24,7 +25,7 @@ declare global {
   };
 }
 
-const $$AssertionFunctions = [isIntAssertion];
+const $$AssertionFunctions = [isIntAssertion, isGeoLocationAssertion];
 
 const $$ValueFunctions = [
   ...dateTimeGeneratorFunctions,
@@ -49,10 +50,9 @@ export {
   $$ApiHooks,
   $$AssertionFunctions,
   $$ValueFunctions,
-  GeoUtils,
-  NumberUtils,
-  StringUtils,
-  getApiHook,
+  GeoUtils, getApiHook,
   getAssertionFunction,
-  getValueFunction,
+  getValueFunction, NumberUtils,
+  StringUtils
 };
+

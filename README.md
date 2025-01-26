@@ -1,8 +1,54 @@
 # ReAPI External Library Template
 
-This template demonstrates how to create a custom library for ReAPI scripts with proper TypeScript support and bundling.
+The ReAPI External Library Template is a ready-to-use project designed to empower QA teams by enabling developers to register global utility functions, custom assertion functions, value functions, and API hooks.
+
+With this template, developers can write code just like a standard Node.js project, leveraging any browser-compatible dependencies.
+
+Once the project is built and deployed, it needs to be registered in the ReAPI platform to be accessible. Read below for a step-by-step guide on how to get started.
+
+## Key Files Overview
+
+Before diving into implementation, familiarize yourself with these essential files:
+
+1. `src/index.ts`
+
+   - Central export file
+   - Manages global type declarations and exports
+   - Defines the structure of your library's public API
+
+2. `src/_support/global.d.ts`
+
+   - Contains core type declarations
+   - Defines global interfaces and types
+   - Essential for TypeScript integration
+
+3. `rollup.config.js`
+
+   - Configures bundle generation
+   - Defines your library's global namespace (e.g., `$$CustomLib`)
+   - Manages build optimization settings
+
+4. `dts.config.json`
+
+   - Controls TypeScript declaration bundling
+   - Manages type declaration dependencies
+   - Configures type definition output
+
+5. `package.json`
+   - Defines package name and version
+   - Manages dependencies
+   - Controls build and test scripts
+
+The build process generates two essential output files in the `dist` directory:
+
+- `bundle.umd.js`: The bundled JavaScript code that includes all dependencies
+- `bundle.d.ts`: The TypeScript declaration file that includes all type dependencies
+
+These two files are required to deploy your library to the cloud and register it with ReAPI.
 
 ## Implementation Guide
+
+> **Important**: Before writing any function code, please read the 'Writing Functions Compatible with ReAPI Platform' (FUNCTIONS.md) document to ensure your functions will work correctly with the ReAPI platform.
 
 ### 1. Bundle Name Configuration
 
