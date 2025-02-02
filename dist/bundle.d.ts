@@ -1,3 +1,82 @@
+export interface AssertionResult {
+	/**
+	 * Indicates whether the assertion passed or failed.
+	 */
+	passed: boolean;
+	/**
+	 * The actual value obtained during the test.
+	 */
+	leftValue?: any;
+	/**
+	 * The expected value to compare against the actual value.
+	 */
+	rightValue?: any;
+	/**
+	 * Additional options for the assertion.
+	 */
+	options?: any;
+	/**
+	 * A message describing the outcome of the assertion.
+	 */
+	message?: string;
+	/**
+	 * Optional metadata related to the assertion.
+	 */
+	meta?: any;
+}
+declare global {
+	interface AssertionFunction {
+		id: string;
+		deprecated?: boolean;
+		tested: boolean;
+		enabled: boolean;
+		noOfParams: number; // only 1, 2
+		function: Function;
+		displayName?: string;
+		description?: string;
+	}
+	interface ValueFunction {
+		id: string;
+		deprecated?: boolean;
+		tested: boolean;
+		enabled: boolean;
+		function: Function;
+		// accept 0 or 1 params. For complex options, use { options }
+		// default is 1
+		noOfParams: 0 | 1;
+		displayName?: string;
+		description?: string;
+	}
+	interface ApiHook {
+		id: string;
+		deprecated?: boolean;
+		tested: boolean;
+		enabled: boolean;
+		displayName: string;
+		description?: string;
+		type: "beforeRequest" | "afterRequest";
+		function: Function;
+	}
+	interface ApiRequest {
+		method: string;
+		url: string;
+		query: Record<string, any>;
+		headers: Record<string, any>;
+		body: any;
+	}
+	interface ApiResponse {
+		status: number;
+		statusText: string;
+		headers: Record<string, any>;
+		data?: Record<string, any> | null | undefined;
+	}
+	type Json = Record<string, any>;
+	const $request: ApiRequest;
+	const $response: ApiResponse;
+	const $context: Record<string, any>;
+	function $addAssertionResult(result: AssertionResult): void;
+	function $setGeneratedValue(value: any): void;
+}
 /**
  * The value values for the "type" property of GeoJSON Objects.
  * https://tools.ietf.org/html/rfc7946#section-1.4
@@ -171,6 +250,9 @@ export declare class GeoUtils {
 	 */
 	static distance(from: Coord, to: Coord): number;
 }
+export declare class NumberUtils {
+	static isInt(value: number): boolean;
+}
 export declare class StringUtils {
 	static toUpperCase(str: string): string;
 }
@@ -178,7 +260,20 @@ declare global {
 	const $$CustomLib: {
 		GeoUtils: typeof GeoUtils;
 		StringUtils: typeof StringUtils;
+		NumberUtils: typeof NumberUtils;
+		$$AssertionFunctions: AssertionFunction[];
+		$$ValueFunctions: ValueFunction[];
+		$$ApiHooks: ApiHook[];
+		getAssertionFunction: (id: string) => Function | undefined;
+		getValueFunction: (id: string) => Function | undefined;
+		getApiHook: (id: string) => Function | undefined;
 	};
 }
+export declare const $$AssertionFunctions: AssertionFunction[];
+export declare const $$ValueFunctions: ValueFunction[];
+export declare const $$ApiHooks: ApiHook[];
+export declare const getAssertionFunction: (id: string) => Function;
+export declare const getValueFunction: (id: string) => Function;
+export declare const getApiHook: (id: string) => Function;
 
 export {};

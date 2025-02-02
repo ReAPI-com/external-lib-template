@@ -3,14 +3,15 @@
     "target": "es6",
     "module": "esnext",
     "lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "./dist",
     "declaration": false,
+    "strict": false,
     "moduleResolution": "node",
     "removeComments": false,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
     "noImplicitThis": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -21,8 +22,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "allowJs": true
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.ts"]
+  "include": ["./src/**/*.ts", "src/_support/global.d.ts"]
 }

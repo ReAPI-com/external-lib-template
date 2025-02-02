@@ -26,9 +26,3 @@ export class GeoUtils {
     return turf.distance(from, to, { units: "kilometers" });
   }
 }
-
-export class StringUtils {
-  static toUpperCase(str: string) {
-    return str.toUpperCase();
-  }
-}
