@@ -5,8 +5,8 @@ export function dateTimeFromTimestamp(timestamp: number) {
   return date.toISOString();
 }
 
-export function formatDateTime(date: Date) {
-  const formattedDate = dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+export function formatTimestamp(timestamp: number) {
+  const formattedDate = dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss");
   return formattedDate;
 }
 
@@ -21,10 +21,10 @@ export const dateTimeTransformerFunctions: ValueFunction[] = [
     noOfParams: 1,
   },
   {
-    id: "reapi-format-date-time",
-    displayName: "Format Date Time",
-    description: "Format a date and time",
-    function: formatDateTime,
+    id: "reapi-format-timestamp",
+    displayName: "Format Timestamp",
+    description: "Format a timestamp to a date and time string",
+    function: formatTimestamp,
     enabled: false,
     tested: false,
     noOfParams: 1,

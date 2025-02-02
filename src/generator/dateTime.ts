@@ -12,7 +12,7 @@ export const dateTimeGeneratorFunctions: ValueFunction[] = [
   {
     id: "reapi-now",
     displayName: "Now",
-    description: "Get the current date and time",
+    description: "Get the current date and time in ISO format",
     function: now,
     noOfParams: 0,
     enabled: true,
