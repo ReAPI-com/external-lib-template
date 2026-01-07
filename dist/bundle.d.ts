@@ -25,36 +25,65 @@ export interface AssertionResult {
 	meta?: any;
 }
 declare global {
-	interface AssertionFunction {
+	// ============================================================================
+	// RESERVED: Component Definition Interfaces
+	// These interfaces define the structure of components that ReAPI can discover
+	// and execute. The field names are fixed and must not be changed.
+	// ============================================================================
+	/**
+	 * Definition for a custom assertion function.
+	 * Assertions validate response data and report pass/fail results.
+	 */
+	interface AssertionDefinition {
+		/** Unique identifier for this assertion (used by ReAPI to invoke it) */
 		id: string;
 		deprecated?: boolean;
 		tested: boolean;
 		enabled: boolean;
-		noOfParams: number; // only 1, 2
+		/**
+		 * Number of parameters the assertion accepts:
+		 * - 1: value only, e.g. isTrue(value)
+		 * - 2: value + expected, e.g. isEqual(actual, expected)
+		 * - 3: value + expected + option, e.g. isCloseTo(actual, expected, delta)
+		 */
+		noOfParams: 1 | 2 | 3;
+		/** The assertion function implementation */
 		function: Function;
 		displayName?: string;
 		description?: string;
 	}
-	interface ValueFunction {
+	/**
+	 * Definition for a custom value generator/transformer.
+	 * Value generators produce dynamic values for test data.
+	 */
+	interface ValueGeneratorDefinition {
+		/** Unique identifier for this generator (used by ReAPI to invoke it) */
 		id: string;
 		deprecated?: boolean;
 		tested: boolean;
 		enabled: boolean;
+		/** The generator function implementation */
 		function: Function;
-		// accept 0 or 1 params. For complex options, use { options }
-		// default is 1
+		/** Number of parameters: 0 (no params) or 1 (with options object) */
 		noOfParams: 0 | 1;
 		displayName?: string;
 		description?: string;
 	}
-	interface ApiHook {
+	/**
+	 * Definition for a custom API hook.
+	 * Hooks run before requests or after responses to modify data.
+	 */
+	interface HookDefinition {
+		/** Unique identifier for this hook (used by ReAPI to invoke it) */
 		id: string;
 		deprecated?: boolean;
 		tested: boolean;
 		enabled: boolean;
 		displayName: string;
 		description?: string;
+		/** When the hook runs: before sending request or after receiving response */
 		type: "beforeRequest" | "afterRequest";
+		/** The hook function implementation */
 		function: Function;
 	}
 	interface ApiRequest {
@@ -71,6 +100,7 @@ declare global {
 		data?: Record<string, any> | null | undefined;
 	}
 	type Json = Record<string, any>;
+	// Platform-injected globals (keep $ prefix)
 	const $request: ApiRequest;
 	const $response: ApiResponse;
 	const $context: Record<string, any>;
@@ -105,8 +135,42 @@ export type BBox = [
  * Array should contain between two and three elements.
  * The previous GeoJSON specification allowed more elements (e.g., which could be used to represent M values),
  * but the current specification only allows X, Y, and (optionally) Z to be defined.
+ *
+ * Note: the type will not be narrowed down to `[number, number] | [number, number, number]` due to
+ * marginal benefits and the large impact of breaking change.
+ *
+ * See previous discussions on the type narrowing:
+ * - {@link https://github.com/DefinitelyTyped/DefinitelyTyped/pull/21590|Nov 2017}
+ * - {@link https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/67773|Dec 2023}
+ * - {@link https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/71441| Dec 2024}
+ *
+ * One can use a
+ * {@link https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates|user-defined type guard that returns a type predicate}
+ * to determine if a position is a 2D or 3D position.
+ *
+ * @example
+ * import type { Position } from 'geojson';
+ *
+ * type StrictPosition = [x: number, y: number] | [x: number, y: number, z: number]
+ *
+ * function isStrictPosition(position: Position): position is StrictPosition {
+ *   return position.length === 2 || position.length === 3
+ * };
+ *
+ * let position: Position = [-116.91, 45.54];
+ *
+ * let x: number;
+ * let y: number;
+ * let z: number | undefined;
+ *
+ * if (isStrictPosition(position)) {
+ *   // `tsc` would throw an error if we tried to destructure a fourth parameter
+ * 	 [x, y, z] = position;
+ * } else {
+ * 	 throw new TypeError("Position is not a 2D or 3D point");
+ * }
  */
-export type Position = number[]; // [number, number] | [number, number, number];
+export type Position = number[];
 /**
  * The base GeoJSON object.
  * https://tools.ietf.org/html/rfc7946#section-3
@@ -257,21 +321,21 @@ export declare class StringUtils {
 	static toUpperCase(str: string): string;
 }
 declare global {
-	const $$CustomLib: {
+	const CustomLib: {
 		GeoUtils: typeof GeoUtils;
 		StringUtils: typeof StringUtils;
 		NumberUtils: typeof NumberUtils;
-		$$AssertionFunctions: AssertionFunction[];
-		$$ValueFunctions: ValueFunction[];
-		$$ApiHooks: ApiHook[];
+		assertions: AssertionDefinition[];
+		valueGenerators: ValueGeneratorDefinition[];
+		hooks: HookDefinition[];
 		getAssertionFunction: (id: string) => Function | undefined;
 		getValueFunction: (id: string) => Function | undefined;
 		getApiHook: (id: string) => Function | undefined;
 	};
 }
-export declare const $$AssertionFunctions: AssertionFunction[];
-export declare const $$ValueFunctions: ValueFunction[];
-export declare const $$ApiHooks: ApiHook[];
+export declare const assertions: AssertionDefinition[];
+export declare const valueGenerators: ValueGeneratorDefinition[];
+export declare const hooks: HookDefinition[];
 export declare const getAssertionFunction: (id: string) => Function;
 export declare const getValueFunction: (id: string) => Function;
 export declare const getApiHook: (id: string) => Function;
