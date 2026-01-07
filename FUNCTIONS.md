@@ -1,18 +1,16 @@
 # Writing Functions Compatible with ReAPI Platform
 
-ReAPI allows developers to extend its capabilities by writing custom assertions, value generators, and API hooks. This guide explains how to write functions that integrate seamlessly with the platform.
+ReAPI allows developers to extend its capabilities by writing custom assertions, value generators, and API hooks.
 
-## Core Types and Configuration
+## Core Types
 
-The core types are defined in `src/_support/global.d.ts`:
+See [`src/_support/global.d.ts`](src/_support/global.d.ts) for type definitions:
 
 - `AssertionDefinition` - Custom assertion function metadata
 - `ValueGeneratorDefinition` - Value generator/transformer metadata
 - `HookDefinition` - API hook metadata
 
 ## Platform-Injected Globals
-
-When your functions run in ReAPI, these globals are available:
 
 | Global                | Available In        | Description                     |
 | --------------------- | ------------------- | ------------------------------- |
@@ -25,114 +23,20 @@ When your functions run in ReAPI, these globals are available:
 
 ### 1. Assertion Functions
 
-Assertions validate data and report results.
+Assertions validate data and report results via `$addAssertionResult()`.
 
-**Registration Array:** `assertions`
+**Examples by parameter count:**
 
-**Interface:** `AssertionDefinition`
-
-```typescript
-interface AssertionDefinition {
-  id: string // Unique identifier (permanent once used)
-  displayName?: string // Human-readable name
-  description?: string // What the assertion does
-  noOfParams: number // 1 or 2 parameters
-  function: Function // The assertion function
-  enabled: boolean // Whether available in UI
-  tested: boolean // Whether thoroughly tested
-  deprecated?: boolean // Mark as deprecated instead of removing
-}
-```
-
-**Example:**
-
-```typescript
-// src/assertion/isPositiveNumber.ts
-export function isPositiveNumber(value: any) {
-  const passed = typeof value === 'number' && value > 0
-
-  $addAssertionResult({
-    passed,
-    leftValue: value,
-    message: passed ? 'Value is positive' : 'Value is not a positive number',
-  })
-}
-
-export const isPositiveNumberAssertion: AssertionDefinition = {
-  id: 'my-lib-is-positive-number',
-  displayName: 'Is Positive Number',
-  description: 'Validates if the value is a positive number',
-  noOfParams: 1,
-  function: isPositiveNumber,
-  enabled: true,
-  tested: true,
-}
-```
-
-**Example - 2 Parameters (comparison):**
-
-```typescript
-// src/assertion/isGreaterThan.ts
-export function isGreaterThan(actual: number, expected: number) {
-  const passed = actual > expected
-
-  $addAssertionResult({
-    passed,
-    leftValue: actual,
-    rightValue: expected,
-    message: passed
-      ? `${actual} is greater than ${expected}`
-      : `${actual} is not greater than ${expected}`,
-  })
-}
-
-export const isGreaterThanAssertion: AssertionDefinition = {
-  id: 'my-lib-is-greater-than',
-  displayName: 'Is Greater Than',
-  description: 'Checks if actual > expected',
-  noOfParams: 2,
-  function: isGreaterThan,
-  enabled: true,
-  tested: true,
-}
-```
-
-**Example - 3 Parameters (with option):**
-
-```typescript
-// src/assertion/isCloseTo.ts
-export function isCloseTo(actual: number, expected: number, delta: number) {
-  const difference = Math.abs(actual - expected)
-  const passed = difference <= delta
-
-  $addAssertionResult({
-    passed,
-    leftValue: actual,
-    rightValue: expected,
-    options: delta,
-    message: passed
-      ? `${actual} is within ${delta} of ${expected}`
-      : `${actual} is not within ${delta} of ${expected}`,
-  })
-}
-
-export const isCloseToAssertion: AssertionDefinition = {
-  id: 'my-lib-is-close-to',
-  displayName: 'Is Close To',
-  description: 'Checks if actual is within delta of expected',
-  noOfParams: 3,
-  function: isCloseTo,
-  enabled: true,
-  tested: true,
-}
-```
+| Params | Example | Source |
+|--------|---------|--------|
+| 1 | `isInt(value)` | [`src/assertion/isInt.ts`](src/assertion/isInt.ts) |
+| 2 | `isGreaterThan(actual, expected)` | [`src/assertion/isGreaterThan.ts`](src/assertion/isGreaterThan.ts) |
+| 3 | `isCloseTo(actual, expected, delta)` | [`src/assertion/isCloseTo.ts`](src/assertion/isCloseTo.ts) |
 
 **Rules:**
-
 - Accept 1, 2, or 3 parameters
 - Must call `$addAssertionResult()` to report results
-- Use 2 params for comparisons: `isGreaterThan(actual, expected)`
-- Use 3 params for tolerance checks: `isCloseTo(actual, expected, delta)`
+- Use Zod for runtime parameter validation (see examples)
 
 ---
 
@@ -140,63 +44,14 @@ export const isCloseToAssertion: AssertionDefinition = {
 
 Value generators produce dynamic values. Transformers convert input to output.
 
-**Registration Array:** `valueGenerators`
+**Examples:**
 
-**Interface:** `ValueGeneratorDefinition`
-
-```typescript
-interface ValueGeneratorDefinition {
-  id: string // Unique identifier
-  displayName?: string // Human-readable name
-  description?: string // What the generator does
-  noOfParams: 0 | 1 // 0 = no input, 1 = takes input
-  function: Function // The generator function
-  enabled: boolean
-  tested: boolean
-  deprecated?: boolean
-}
-```
-
-**Example - Generator (no params):**
-
-```typescript
-// src/generator/uuid.ts
-export function generateUuid() {
-  return crypto.randomUUID()
-}
-
-export const uuidGenerator: ValueGeneratorDefinition = {
-  id: 'my-lib-uuid',
-  displayName: 'UUID',
-  description: 'Generate a random UUID',
-  noOfParams: 0,
-  function: generateUuid,
-  enabled: true,
-  tested: true,
-}
-```
-
-**Example - Transformer (1 param):**
-
-```typescript
-// src/transformer/uppercase.ts
-export function toUpperCase(value: string) {
-  return value?.toUpperCase() ?? ''
-}
-
-export const upperCaseTransformer: ValueGeneratorDefinition = {
-  id: 'my-lib-uppercase',
-  displayName: 'To Upper Case',
-  description: 'Convert string to uppercase',
-  noOfParams: 1,
-  function: toUpperCase,
-  enabled: true,
-  tested: true,
-}
-```
+| Type | Params | Example | Source |
+|------|--------|---------|--------|
+| Generator | 0 | `now()` | [`src/generator/dateTime.ts`](src/generator/dateTime.ts) |
+| Transformer | 1 | `formatTimestamp(ts)` | [`src/transformer/dateTime.ts`](src/transformer/dateTime.ts) |
 
 **Rules:**
-
 - Must return a value
 - Accept 0 or 1 parameter only
 - Handle undefined/null inputs gracefully
@@ -207,144 +62,49 @@ export const upperCaseTransformer: ValueGeneratorDefinition = {
 
 Hooks run before requests or after responses to modify data.
 
-**Registration Array:** `hooks`
+**Examples:**
 
-**Interface:** `HookDefinition`
+| Type | Example | Source |
+|------|---------|--------|
+| beforeRequest | `modifyRequestParams()` | [`src/hook/modifyRequestParams.ts`](src/hook/modifyRequestParams.ts) |
+| afterResponse | `modifyResponseData()` | [`src/hook/modifyResponseData.ts`](src/hook/modifyResponseData.ts) |
 
-```typescript
-interface HookDefinition {
-  id: string
-  displayName: string // Required for hooks
-  description?: string
-  type: 'beforeRequest' | 'afterRequest'
-  function: Function
-  enabled: boolean
-  tested: boolean
-  deprecated?: boolean
-}
-```
+**Available globals:**
 
-**Example - beforeRequest Hook:**
-
-```typescript
-// src/hook/addAuthHeader.ts
-export async function addAuthHeader() {
-  $request.headers['Authorization'] = `Bearer ${$context.token}`
-  $request.headers['X-Request-Id'] = crypto.randomUUID()
-}
-
-export const addAuthHeaderHook: HookDefinition = {
-  id: 'my-lib-add-auth-header',
-  displayName: 'Add Auth Header',
-  description: 'Adds authorization header from context',
-  type: 'beforeRequest',
-  function: addAuthHeader,
-  enabled: true,
-  tested: true,
-}
-```
-
-**Example - afterResponse Hook:**
-
-```typescript
-// src/hook/extractToken.ts
-export async function extractToken() {
-  if ($response.data?.token) {
-    $context.token = $response.data.token
-  }
-  $context.lastStatus = $response.status
-}
-
-export const extractTokenHook: HookDefinition = {
-  id: 'my-lib-extract-token',
-  displayName: 'Extract Token',
-  description: 'Extracts token from response to context',
-  type: 'afterRequest',
-  function: extractToken,
-  enabled: true,
-  tested: true,
-}
-```
-
-**Available in beforeRequest:**
-
-- `$request` - Modify headers, query, body
-- `$context` - Read/write shared data
-
-**Available in afterResponse:**
-
-- `$request` - Read original request
-- `$response` - Read/modify response data
-- `$context` - Read/write shared data
+- **beforeRequest**: `$request`, `$context`
+- **afterResponse**: `$request`, `$response`, `$context`
 
 ---
 
-## Registration in index.ts
+## Registration
 
-Add your components to the registration arrays:
-
-```typescript
-// src/index.ts
-import { isPositiveNumberAssertion } from './assertion/isPositiveNumber'
-import { uuidGenerator } from './generator/uuid'
-import { addAuthHeaderHook } from './hook/addAuthHeader'
-
-const assertions: AssertionDefinition[] = [
-  isPositiveNumberAssertion,
-  // ... more assertions
-]
-
-const valueGenerators: ValueGeneratorDefinition[] = [
-  uuidGenerator,
-  // ... more generators
-]
-
-const hooks: HookDefinition[] = [
-  addAuthHeaderHook,
-  // ... more hooks
-]
-```
-
-## Async Support
-
-All function types support async/await:
+Add components to the arrays in [`src/index.ts`](src/index.ts):
 
 ```typescript
-async function validateWithApi(value: any) {
-  const result = await fetch(`https://api.example.com/validate?v=${value}`)
-  const data = await result.json()
-
-  $addAssertionResult({
-    passed: data.valid,
-    leftValue: value,
-    message: data.message,
-  })
-}
+const assertions: AssertionDefinition[] = [...]
+const valueGenerators: ValueGeneratorDefinition[] = [...]
+const hooks: HookDefinition[] = [...]
 ```
 
 ## Best Practices
 
 ### ID Naming
-
 - Use a prefix to avoid conflicts: `my-lib-function-name`
 - IDs are permanent - once used in tests, don't change them
 
-### Deprecation
+### Parameter Validation
+- Use Zod for runtime validation (see assertion examples)
+- Declare correct types in function signature for IDE support
 
+### Deprecation
 - Never remove functions used in existing tests
 - Set `deprecated: true` to hide from UI while keeping existing tests working
 
-### Error Handling
-
-- Handle null/undefined inputs gracefully
-- Provide meaningful error messages
-
 ### Testing
-
 - Set `tested: true` only after thorough testing
-- See `TESTING.md` for testing patterns
+- See [`TESTING.md`](TESTING.md) for testing patterns
 
-## Summary Table
+## Summary
 
 | Component       | Array             | Params    | Must Return | Platform API                               |
 | --------------- | ----------------- | --------- | ----------- | ------------------------------------------ |
