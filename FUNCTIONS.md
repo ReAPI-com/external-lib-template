@@ -14,12 +14,12 @@ The core types are defined in `src/_support/global.d.ts`:
 
 When your functions run in ReAPI, these globals are available:
 
-| Global               | Available In           | Description                              |
-| -------------------- | ---------------------- | ---------------------------------------- |
-| `$request`           | Hooks                  | The API request object                   |
-| `$response`          | afterResponse hooks    | The API response object                  |
-| `$context`           | Hooks                  | Shared context for data passing          |
-| `$addAssertionResult`| Assertions             | Report assertion pass/fail               |
+| Global                | Available In        | Description                     |
+| --------------------- | ------------------- | ------------------------------- |
+| `$request`            | Hooks               | The API request object          |
+| `$response`           | afterResponse hooks | The API response object         |
+| `$context`            | Hooks               | Shared context for data passing |
+| `$addAssertionResult` | Assertions          | Report assertion pass/fail      |
 
 ## Component Types
 
@@ -33,14 +33,14 @@ Assertions validate data and report results.
 
 ```typescript
 interface AssertionDefinition {
-  id: string              // Unique identifier (permanent once used)
-  displayName?: string    // Human-readable name
-  description?: string    // What the assertion does
-  noOfParams: number      // 1 or 2 parameters
-  function: Function      // The assertion function
-  enabled: boolean        // Whether available in UI
-  tested: boolean         // Whether thoroughly tested
-  deprecated?: boolean    // Mark as deprecated instead of removing
+  id: string // Unique identifier (permanent once used)
+  displayName?: string // Human-readable name
+  description?: string // What the assertion does
+  noOfParams: number // 1 or 2 parameters
+  function: Function // The assertion function
+  enabled: boolean // Whether available in UI
+  tested: boolean // Whether thoroughly tested
+  deprecated?: boolean // Mark as deprecated instead of removing
 }
 ```
 
@@ -50,7 +50,7 @@ interface AssertionDefinition {
 // src/assertion/isPositiveNumber.ts
 export function isPositiveNumber(value: any) {
   const passed = typeof value === 'number' && value > 0
-  
+
   $addAssertionResult({
     passed,
     leftValue: value,
@@ -70,6 +70,7 @@ export const isPositiveNumberAssertion: AssertionDefinition = {
 ```
 
 **Rules:**
+
 - Accept 1 or 2 parameters only
 - Must call `$addAssertionResult()` to report results
 - Use 2 params for comparisons: `isGreaterThan(actual, expected)`
@@ -86,11 +87,11 @@ Value generators produce dynamic values. Transformers convert input to output.
 
 ```typescript
 interface ValueGeneratorDefinition {
-  id: string              // Unique identifier
-  displayName?: string    // Human-readable name
-  description?: string    // What the generator does
-  noOfParams: 0 | 1       // 0 = no input, 1 = takes input
-  function: Function      // The generator function
+  id: string // Unique identifier
+  displayName?: string // Human-readable name
+  description?: string // What the generator does
+  noOfParams: 0 | 1 // 0 = no input, 1 = takes input
+  function: Function // The generator function
   enabled: boolean
   tested: boolean
   deprecated?: boolean
@@ -136,6 +137,7 @@ export const upperCaseTransformer: ValueGeneratorDefinition = {
 ```
 
 **Rules:**
+
 - Must return a value
 - Accept 0 or 1 parameter only
 - Handle undefined/null inputs gracefully
@@ -153,7 +155,7 @@ Hooks run before requests or after responses to modify data.
 ```typescript
 interface HookDefinition {
   id: string
-  displayName: string     // Required for hooks
+  displayName: string // Required for hooks
   description?: string
   type: 'beforeRequest' | 'afterRequest'
   function: Function
@@ -206,10 +208,12 @@ export const extractTokenHook: HookDefinition = {
 ```
 
 **Available in beforeRequest:**
+
 - `$request` - Modify headers, query, body
 - `$context` - Read/write shared data
 
 **Available in afterResponse:**
+
 - `$request` - Read original request
 - `$response` - Read/modify response data
 - `$context` - Read/write shared data
@@ -250,7 +254,7 @@ All function types support async/await:
 async function validateWithApi(value: any) {
   const result = await fetch(`https://api.example.com/validate?v=${value}`)
   const data = await result.json()
-  
+
   $addAssertionResult({
     passed: data.valid,
     leftValue: value,
@@ -262,25 +266,29 @@ async function validateWithApi(value: any) {
 ## Best Practices
 
 ### ID Naming
+
 - Use a prefix to avoid conflicts: `my-lib-function-name`
 - IDs are permanent - once used in tests, don't change them
 
 ### Deprecation
+
 - Never remove functions used in existing tests
 - Set `deprecated: true` to hide from UI while keeping existing tests working
 
 ### Error Handling
+
 - Handle null/undefined inputs gracefully
 - Provide meaningful error messages
 
 ### Testing
+
 - Set `tested: true` only after thorough testing
 - See `TESTING.md` for testing patterns
 
 ## Summary Table
 
-| Component      | Array            | Params    | Must Return | Platform API            |
-| -------------- | ---------------- | --------- | ----------- | ----------------------- |
-| Assertion      | `assertions`     | 1 or 2    | No          | `$addAssertionResult()` |
-| Value Generator| `valueGenerators`| 0 or 1    | Yes         | None                    |
-| Hook           | `hooks`          | 0         | No          | Modify `$request`, `$response`, `$context` |
+| Component       | Array             | Params | Must Return | Platform API                               |
+| --------------- | ----------------- | ------ | ----------- | ------------------------------------------ |
+| Assertion       | `assertions`      | 1 or 2 | No          | `$addAssertionResult()`                    |
+| Value Generator | `valueGenerators` | 0 or 1 | Yes         | None                                       |
+| Hook            | `hooks`           | 0      | No          | Modify `$request`, `$response`, `$context` |
