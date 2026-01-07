@@ -3,7 +3,11 @@
   "version": "0.0.6",
   "description": "Example of how to create an external library for the ReAPI API testing platform",
   "main": "dist/bundle.umd.js",
+  "types": "dist/bundle.d.ts",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && rollup -c && pnpm build:type",

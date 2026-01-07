@@ -26,38 +26,63 @@ interface AssertionResult {
 }
 
 declare global {
+  // ============================================================================
+  // RESERVED: Component Definition Interfaces
+  // These interfaces define the structure of components that ReAPI can discover
+  // and execute. The field names are fixed and must not be changed.
+  // ============================================================================
+
+  /**
+   * Definition for a custom assertion function.
+   * Assertions validate response data and report pass/fail results.
+   */
   interface AssertionDefinition {
+    /** Unique identifier for this assertion (used by ReAPI to invoke it) */
     id: string;
     deprecated?: boolean;
     tested: boolean;
     enabled: boolean;
-    noOfParams: number; // only 1, 2
+    /** Number of parameters: 1 (value only) or 2 (value + expected) */
+    noOfParams: number;
+    /** The assertion function implementation */
     function: Function;
     displayName?: string;
     description?: string;
   }
 
+  /**
+   * Definition for a custom value generator/transformer.
+   * Value generators produce dynamic values for test data.
+   */
   interface ValueGeneratorDefinition {
+    /** Unique identifier for this generator (used by ReAPI to invoke it) */
     id: string;
     deprecated?: boolean;
     tested: boolean;
     enabled: boolean;
+    /** The generator function implementation */
     function: Function;
-    // accept 0 or 1 params. For complex options, use { options }
-    // default is 1
+    /** Number of parameters: 0 (no params) or 1 (with options object) */
     noOfParams: 0 | 1;
     displayName?: string;
     description?: string;
   }
 
+  /**
+   * Definition for a custom API hook.
+   * Hooks run before requests or after responses to modify data.
+   */
   interface HookDefinition {
+    /** Unique identifier for this hook (used by ReAPI to invoke it) */
     id: string;
     deprecated?: boolean;
     tested: boolean;
     enabled: boolean;
     displayName: string;
     description?: string;
+    /** When the hook runs: before sending request or after receiving response */
     type: "beforeRequest" | "afterRequest";
+    /** The hook function implementation */
     function: Function;
   }
 
