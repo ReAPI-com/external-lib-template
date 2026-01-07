@@ -42,8 +42,13 @@ declare global {
     deprecated?: boolean;
     tested: boolean;
     enabled: boolean;
-    /** Number of parameters: 1 (value only) or 2 (value + expected) */
-    noOfParams: number;
+    /**
+     * Number of parameters the assertion accepts:
+     * - 1: value only, e.g. isTrue(value)
+     * - 2: value + expected, e.g. isEqual(actual, expected)
+     * - 3: value + expected + option, e.g. isCloseTo(actual, expected, delta)
+     */
+    noOfParams: 1 | 2 | 3;
     /** The assertion function implementation */
     function: Function;
     displayName?: string;

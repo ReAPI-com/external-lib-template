@@ -69,11 +69,70 @@ export const isPositiveNumberAssertion: AssertionDefinition = {
 }
 ```
 
+**Example - 2 Parameters (comparison):**
+
+```typescript
+// src/assertion/isGreaterThan.ts
+export function isGreaterThan(actual: number, expected: number) {
+  const passed = actual > expected
+
+  $addAssertionResult({
+    passed,
+    leftValue: actual,
+    rightValue: expected,
+    message: passed
+      ? `${actual} is greater than ${expected}`
+      : `${actual} is not greater than ${expected}`,
+  })
+}
+
+export const isGreaterThanAssertion: AssertionDefinition = {
+  id: 'my-lib-is-greater-than',
+  displayName: 'Is Greater Than',
+  description: 'Checks if actual > expected',
+  noOfParams: 2,
+  function: isGreaterThan,
+  enabled: true,
+  tested: true,
+}
+```
+
+**Example - 3 Parameters (with option):**
+
+```typescript
+// src/assertion/isCloseTo.ts
+export function isCloseTo(actual: number, expected: number, delta: number) {
+  const difference = Math.abs(actual - expected)
+  const passed = difference <= delta
+
+  $addAssertionResult({
+    passed,
+    leftValue: actual,
+    rightValue: expected,
+    options: delta,
+    message: passed
+      ? `${actual} is within ${delta} of ${expected}`
+      : `${actual} is not within ${delta} of ${expected}`,
+  })
+}
+
+export const isCloseToAssertion: AssertionDefinition = {
+  id: 'my-lib-is-close-to',
+  displayName: 'Is Close To',
+  description: 'Checks if actual is within delta of expected',
+  noOfParams: 3,
+  function: isCloseTo,
+  enabled: true,
+  tested: true,
+}
+```
+
 **Rules:**
 
-- Accept 1 or 2 parameters only
+- Accept 1, 2, or 3 parameters
 - Must call `$addAssertionResult()` to report results
 - Use 2 params for comparisons: `isGreaterThan(actual, expected)`
+- Use 3 params for tolerance checks: `isCloseTo(actual, expected, delta)`
 
 ---
 
@@ -287,8 +346,8 @@ async function validateWithApi(value: any) {
 
 ## Summary Table
 
-| Component       | Array             | Params | Must Return | Platform API                               |
-| --------------- | ----------------- | ------ | ----------- | ------------------------------------------ |
-| Assertion       | `assertions`      | 1 or 2 | No          | `$addAssertionResult()`                    |
-| Value Generator | `valueGenerators` | 0 or 1 | Yes         | None                                       |
-| Hook            | `hooks`           | 0      | No          | Modify `$request`, `$response`, `$context` |
+| Component       | Array             | Params    | Must Return | Platform API                               |
+| --------------- | ----------------- | --------- | ----------- | ------------------------------------------ |
+| Assertion       | `assertions`      | 1, 2 or 3 | No          | `$addAssertionResult()`                    |
+| Value Generator | `valueGenerators` | 0 or 1    | Yes         | None                                       |
+| Hook            | `hooks`           | 0         | No          | Modify `$request`, `$response`, `$context` |

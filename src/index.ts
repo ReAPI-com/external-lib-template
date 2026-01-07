@@ -1,4 +1,6 @@
+import { isCloseToAssertion } from './assertion/isCloseTo'
 import { isGeoLocationAssertion } from './assertion/isGeoLocation'
+import { isGreaterThanAssertion } from './assertion/isGreaterThan'
 import { isIntAssertion } from './assertion/isInt'
 import { dateTimeGeneratorFunctions } from './generator/dateTime'
 import { modifyRequestParamsHook } from './hook/modifyRequestParams'
@@ -41,7 +43,15 @@ declare global {
 // These arrays are scanned by ReAPI to discover and register your components.
 // Add your custom components to these arrays.
 // ============================================================================
-const assertions: AssertionDefinition[] = [isIntAssertion, isGeoLocationAssertion]
+const assertions: AssertionDefinition[] = [
+  // 1-param assertions
+  isIntAssertion,
+  isGeoLocationAssertion,
+  // 2-param assertions
+  isGreaterThanAssertion,
+  // 3-param assertions
+  isCloseToAssertion,
+]
 
 const valueGenerators: ValueGeneratorDefinition[] = [
   ...dateTimeGeneratorFunctions,
