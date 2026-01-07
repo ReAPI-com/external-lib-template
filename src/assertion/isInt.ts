@@ -16,7 +16,7 @@ export function isInt(value: any) {
   }
 }
 
-export const isIntAssertion: AssertionFunction = {
+export const isIntAssertion: AssertionDefinition = {
   id: "reapi-is-int",
   noOfParams: 1,
   function: isInt,

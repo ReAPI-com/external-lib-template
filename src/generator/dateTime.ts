@@ -8,7 +8,7 @@ export function nowTimestamp() {
   return new Date().getTime();
 }
 
-export const dateTimeGeneratorFunctions: ValueFunction[] = [
+export const dateTimeGeneratorFunctions: ValueGeneratorDefinition[] = [
   {
     id: "reapi-now",
     displayName: "Now",

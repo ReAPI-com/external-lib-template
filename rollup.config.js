@@ -10,7 +10,7 @@ export default defineConfig({
     {
       file: "dist/bundle.umd.js",
       format: "umd",
-      name: "$$CustomLib",
+      name: "CustomLib",
     },
   ],
   plugins: [

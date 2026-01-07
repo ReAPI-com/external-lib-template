@@ -26,7 +26,7 @@ interface AssertionResult {
 }
 
 declare global {
-  interface AssertionFunction {
+  interface AssertionDefinition {
     id: string;
     deprecated?: boolean;
     tested: boolean;
@@ -37,7 +37,7 @@ declare global {
     description?: string;
   }
 
-  interface ValueFunction {
+  interface ValueGeneratorDefinition {
     id: string;
     deprecated?: boolean;
     tested: boolean;
@@ -50,7 +50,7 @@ declare global {
     description?: string;
   }
 
-  interface ApiHook {
+  interface HookDefinition {
     id: string;
     deprecated?: boolean;
     tested: boolean;
@@ -78,6 +78,7 @@ declare global {
 
   type Json = Record<string, any>;
 
+  // Platform-injected globals (keep $ prefix)
   const $request: ApiRequest;
   const $response: ApiResponse;
   const $context: Record<string, any>;
@@ -87,4 +88,3 @@ declare global {
 }
 
 export { };
-

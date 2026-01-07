@@ -5,7 +5,7 @@ export async function modifyResponseData() {
   $context.bar = "foo";
 }
 
-export const modifyResponseDataHook: ApiHook = {
+export const modifyResponseDataHook: HookDefinition = {
   id: "reapi-modify-response-data",
   displayName: "Modify Response Data",
   description: "Modify the response data",

@@ -8,7 +8,7 @@ export async function modifyRequestParams() {
   $context.foo = "bar";
 }
 
-export const modifyRequestParamsHook: ApiHook = {
+export const modifyRequestParamsHook: HookDefinition = {
   id: "reapi-modify-request-params",
   displayName: "Modify Request Params",
   description: "Modify the request params",
