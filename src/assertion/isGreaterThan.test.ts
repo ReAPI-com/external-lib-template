@@ -73,7 +73,7 @@ describe('isGreaterThan (2-param assertion)', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for non-number expected with validation error', () => {
@@ -81,7 +81,7 @@ describe('isGreaterThan (2-param assertion)', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for NaN actual with validation error', () => {
@@ -89,7 +89,7 @@ describe('isGreaterThan (2-param assertion)', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
   })
 })

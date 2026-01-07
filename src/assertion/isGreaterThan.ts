@@ -8,15 +8,8 @@ import { z } from 'zod'
  */
 
 // Define the expected parameter schemas
-const actualSchema = z.number({
-  required_error: 'Actual value is required',
-  invalid_type_error: 'Actual value must be a number',
-})
-
-const expectedSchema = z.number({
-  required_error: 'Expected value is required',
-  invalid_type_error: 'Expected value must be a number',
-})
+const actualSchema = z.number({ message: 'Actual value must be a number' })
+const expectedSchema = z.number({ message: 'Expected value must be a number' })
 
 export function isGreaterThan(actual: number, expected: number) {
   // Validate first parameter

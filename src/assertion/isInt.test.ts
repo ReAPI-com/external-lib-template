@@ -66,7 +66,7 @@ describe('isInt', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for null with validation error', () => {
@@ -74,7 +74,7 @@ describe('isInt', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for undefined with validation error', () => {
@@ -89,7 +89,7 @@ describe('isInt', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for NaN', () => {

@@ -10,21 +10,10 @@ import { z } from 'zod'
  */
 
 // Define the expected parameter schemas
-const actualSchema = z.number({
-  required_error: 'Actual value is required',
-  invalid_type_error: 'Actual value must be a number',
-})
-
-const expectedSchema = z.number({
-  required_error: 'Expected value is required',
-  invalid_type_error: 'Expected value must be a number',
-})
-
+const actualSchema = z.number({ message: 'Actual value must be a number' })
+const expectedSchema = z.number({ message: 'Expected value must be a number' })
 const deltaSchema = z
-  .number({
-    required_error: 'Delta is required',
-    invalid_type_error: 'Delta must be a number',
-  })
+  .number({ message: 'Delta must be a number' })
   .nonnegative({ message: 'Delta must be a non-negative number' })
 
 export function isCloseTo(actual: number, expected: number, delta: number) {

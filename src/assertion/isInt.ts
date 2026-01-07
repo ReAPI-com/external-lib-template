@@ -8,10 +8,7 @@ import { z } from 'zod'
  */
 
 // Define the expected parameter schema
-const paramSchema = z.number({
-  required_error: 'Value is required',
-  invalid_type_error: 'Value must be a number',
-})
+const paramSchema = z.number({ message: 'Value must be a number' })
 
 export function isInt(value: number) {
   // Validate parameter type using Zod

@@ -92,7 +92,7 @@ describe('isCloseTo (3-param assertion)', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for non-number expected with validation error', () => {
@@ -100,7 +100,7 @@ describe('isCloseTo (3-param assertion)', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for negative delta with validation error', () => {
@@ -116,7 +116,7 @@ describe('isCloseTo (3-param assertion)', () => {
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('expected number')
+      expect(assertionResults[0].message).toContain('must be a number')
     })
 
     it('should fail for null actual', () => {
