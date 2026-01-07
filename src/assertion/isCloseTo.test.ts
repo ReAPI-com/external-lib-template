@@ -86,23 +86,24 @@ describe('isCloseTo (3-param assertion)', () => {
     })
   })
 
-  describe('invalid inputs', () => {
-    it('should fail for non-number actual', () => {
+  describe('invalid inputs (Zod validation)', () => {
+    it('should fail for non-number actual with validation error', () => {
       isCloseTo('10' as any, 10, 1)
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
-      expect(assertionResults[0].message).toContain('valid numbers')
+      expect(assertionResults[0].message).toContain('expected number')
     })
 
-    it('should fail for non-number expected', () => {
+    it('should fail for non-number expected with validation error', () => {
       isCloseTo(10, '10' as any, 1)
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)
+      expect(assertionResults[0].message).toContain('expected number')
     })
 
-    it('should fail for negative delta', () => {
+    it('should fail for negative delta with validation error', () => {
       isCloseTo(10, 10, -1)
 
       expect(assertionResults).toHaveLength(1)
@@ -110,8 +111,23 @@ describe('isCloseTo (3-param assertion)', () => {
       expect(assertionResults[0].message).toContain('non-negative')
     })
 
-    it('should fail for NaN delta', () => {
+    it('should fail for NaN delta with validation error', () => {
       isCloseTo(10, 10, NaN)
+
+      expect(assertionResults).toHaveLength(1)
+      expect(assertionResults[0].passed).toBe(false)
+      expect(assertionResults[0].message).toContain('expected number')
+    })
+
+    it('should fail for null actual', () => {
+      isCloseTo(null, 10, 1)
+
+      expect(assertionResults).toHaveLength(1)
+      expect(assertionResults[0].passed).toBe(false)
+    })
+
+    it('should fail for undefined delta', () => {
+      isCloseTo(10, 10, undefined)
 
       expect(assertionResults).toHaveLength(1)
       expect(assertionResults[0].passed).toBe(false)

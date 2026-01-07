@@ -25,7 +25,8 @@
     "@turf/turf": "^7.2.0",
     "@types/lodash": "^4.17.13",
     "dayjs": "^1.11.13",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.2",

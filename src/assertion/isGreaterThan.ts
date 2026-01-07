@@ -1,33 +1,60 @@
+import { z } from 'zod'
+
 /**
- * 2-Parameter Assertion Example
+ * 2-Parameter Assertion Example with Zod Validation
  *
  * Compares two values to check if the first is greater than the second.
- * This demonstrates a 2-param assertion pattern (actual vs expected).
+ * Uses Zod to validate both parameters are numbers.
  */
 
-export function isGreaterThan(actual: number, expected: number) {
-  const isActualNumber = typeof actual === 'number' && !isNaN(actual)
-  const isExpectedNumber = typeof expected === 'number' && !isNaN(expected)
+// Define the expected parameter schemas
+const actualSchema = z.number({
+  required_error: 'Actual value is required',
+  invalid_type_error: 'Actual value must be a number',
+})
 
-  if (!isActualNumber || !isExpectedNumber) {
+const expectedSchema = z.number({
+  required_error: 'Expected value is required',
+  invalid_type_error: 'Expected value must be a number',
+})
+
+export function isGreaterThan(actual: unknown, expected: unknown) {
+  // Validate first parameter
+  const actualResult = actualSchema.safeParse(actual)
+  if (!actualResult.success) {
     $addAssertionResult({
       passed: false,
       leftValue: actual,
       rightValue: expected,
-      message: 'Both values must be valid numbers',
+      message: `Actual: ${actualResult.error.issues[0].message}`,
     })
     return
   }
 
-  const passed = actual > expected
+  // Validate second parameter
+  const expectedResult = expectedSchema.safeParse(expected)
+  if (!expectedResult.success) {
+    $addAssertionResult({
+      passed: false,
+      leftValue: actual,
+      rightValue: expected,
+      message: `Expected: ${expectedResult.error.issues[0].message}`,
+    })
+    return
+  }
+
+  // Now we know both are numbers
+  const actualNum = actualResult.data
+  const expectedNum = expectedResult.data
+  const passed = actualNum > expectedNum
 
   $addAssertionResult({
     passed,
     leftValue: actual,
     rightValue: expected,
     message: passed
-      ? `${actual} is greater than ${expected}`
-      : `${actual} is not greater than ${expected}`,
+      ? `${actualNum} is greater than ${expectedNum}`
+      : `${actualNum} is not greater than ${expectedNum}`,
   })
 }
 
@@ -40,4 +67,3 @@ export const isGreaterThanAssertion: AssertionDefinition = {
   enabled: true,
   tested: true,
 }
-
