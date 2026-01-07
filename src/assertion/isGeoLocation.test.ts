@@ -10,12 +10,12 @@ describe('isGeoLocation', () => {
   // assertion results. For testing, we capture results in an array.
   // ============================================================================
 
-  let assertionResults: AssertionResult[] = []
+  let assertionResults: { passed: boolean; leftValue?: any; message?: string }[] = []
 
   beforeEach(() => {
     assertionResults = []
     // @ts-ignore - globalThis typing
-    globalThis.$addAssertionResult = (result: AssertionResult) => {
+    globalThis.$addAssertionResult = (result: { passed: boolean; leftValue?: any; message?: string }) => {
       assertionResults.push(result)
     }
   })
