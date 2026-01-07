@@ -27,7 +27,7 @@ const deltaSchema = z
   })
   .nonnegative({ message: 'Delta must be a non-negative number' })
 
-export function isCloseTo(actual: unknown, expected: unknown, delta: unknown) {
+export function isCloseTo(actual: number, expected: number, delta: number) {
   // Validate first parameter
   const actualResult = actualSchema.safeParse(actual)
   if (!actualResult.success) {

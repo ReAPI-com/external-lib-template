@@ -13,7 +13,7 @@ const paramSchema = z.number({
   invalid_type_error: 'Value must be a number',
 })
 
-export function isInt(value: unknown) {
+export function isInt(value: number) {
   // Validate parameter type using Zod
   const parseResult = paramSchema.safeParse(value)
 

@@ -18,7 +18,7 @@ const expectedSchema = z.number({
   invalid_type_error: 'Expected value must be a number',
 })
 
-export function isGreaterThan(actual: unknown, expected: unknown) {
+export function isGreaterThan(actual: number, expected: number) {
   // Validate first parameter
   const actualResult = actualSchema.safeParse(actual)
   if (!actualResult.success) {
