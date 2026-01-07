@@ -1,132 +1,286 @@
 # Writing Functions Compatible with ReAPI Platform
 
-ReAPI allows developers to extend its capabilities by writing custom assertion and value functions. However, to ensure seamless integration with the platform, these functions must adhere to specific rules and guidelines.
+ReAPI allows developers to extend its capabilities by writing custom assertions, value generators, and API hooks. This guide explains how to write functions that integrate seamlessly with the platform.
 
 ## Core Types and Configuration
 
-The core types and configuration details are located in `_support/global.d.ts` and `index.ts`, where you can find the exact structure and types that will be referenced in this guide.
+The core types are defined in `src/_support/global.d.ts`:
 
-## Key Guidelines for Writing Compatible Functions
+- `AssertionDefinition` - Custom assertion function metadata
+- `ValueGeneratorDefinition` - Value generator/transformer metadata
+- `HookDefinition` - API hook metadata
 
-### 1. Registration Requirements
+## Platform-Injected Globals
 
-Both assertion and value functions must be added to their respective containers:
+When your functions run in ReAPI, these globals are available:
 
-- **Assertion Functions:** `$$AssertionFunctions`
-- **Value Functions:** `$$ValueFunctions`
+| Global               | Available In           | Description                              |
+| -------------------- | ---------------------- | ---------------------------------------- |
+| `$request`           | Hooks                  | The API request object                   |
+| `$response`          | afterResponse hooks    | The API response object                  |
+| `$context`           | Hooks                  | Shared context for data passing          |
+| `$addAssertionResult`| Assertions             | Report assertion pass/fail               |
 
-These containers will be scanned by the ReAPI platform and registered accordingly.
+## Component Types
 
-### 2. Metadata Requirements
+### 1. Assertion Functions
 
-When adding functions to the respective containers, metadata must be provided. The required metadata includes:
+Assertions validate data and report results.
 
-- **`ID`** (Unique Identifier): Must be unique across the project. Once used in the ReAPI platform, the reference will be permanently linked to the ID.
-  - **Important:** Disabling or removing a function will result in errors, as references will become invalid.
-  - To retire a function, set `deprecated=true` in the metadata to prevent further use without breaking existing tests.
-- **`Title`**: A meaningful, human-readable name.
-- **`Description`**: A brief explanation of what the function does.
+**Registration Array:** `assertions`
 
-Example:
+**Interface:** `AssertionDefinition`
 
-```javascript
-import { isPositiveNumber } from "assertion/isPositiveNumber";
-
-$$AssertionFunctions.push({
-  id: "isPositiveNumber",
-  title: "Check if value is a positive number",
-  description: "Validates if the given value is a positive number",
-  func: isPositiveNumber,
-});
-```
-
-### 3. Function Parameters
-
-Each function must adhere to the following parameter rules:
-
-- **Assertion Functions:**
-
-  - Accept only 1 or 2 parameters.
-  - Example with 1 parameter: `isString(value)`
-  - Example with 2 parameters: `isGreaterThan(valueA, valueB)`
-
-- **Value Functions:**
-
-  - Accept 0 or 1 parameter.
-  - Should gracefully handle undefined values by providing default options.
-
-### 4. Async Support
-
-Asynchronous functions are fully supported; however, the `await` keyword must be used properly to ensure sequential execution and avoid race conditions.
-
-Example:
-
-```javascript
-async function isApiResponseValid(response) {
-  const validationResult = await someAsyncValidation(response);
-  $addAssertionResult({ passed: validationResult, leftValue: response });
+```typescript
+interface AssertionDefinition {
+  id: string              // Unique identifier (permanent once used)
+  displayName?: string    // Human-readable name
+  description?: string    // What the assertion does
+  noOfParams: number      // 1 or 2 parameters
+  function: Function      // The assertion function
+  enabled: boolean        // Whether available in UI
+  tested: boolean         // Whether thoroughly tested
+  deprecated?: boolean    // Mark as deprecated instead of removing
 }
 ```
 
-### 5. Reporting Assertion Results
+**Example:**
 
-For assertion functions, it's mandatory to use the ReAPI API `$addAssertionResult()` to report the result. This function integrates validation results into the platform for reporting and debugging.
+```typescript
+// src/assertion/isPositiveNumber.ts
+export function isPositiveNumber(value: any) {
+  const passed = typeof value === 'number' && value > 0
+  
+  $addAssertionResult({
+    passed,
+    leftValue: value,
+    message: passed ? 'Value is positive' : 'Value is not a positive number',
+  })
+}
 
-Example:
+export const isPositiveNumberAssertion: AssertionDefinition = {
+  id: 'my-lib-is-positive-number',
+  displayName: 'Is Positive Number',
+  description: 'Validates if the value is a positive number',
+  noOfParams: 1,
+  function: isPositiveNumber,
+  enabled: true,
+  tested: true,
+}
+```
 
-```javascript
-function validateEmail(value) {
-  if (/^[\w-.]+@[\w-]+\.[a-z]{2,4}$/.test(value)) {
-    $addAssertionResult({ passed: true, leftValue: value });
-  } else {
-    $addAssertionResult({
-      passed: false,
-      leftValue: value,
-      message: "Invalid email format",
-    });
+**Rules:**
+- Accept 1 or 2 parameters only
+- Must call `$addAssertionResult()` to report results
+- Use 2 params for comparisons: `isGreaterThan(actual, expected)`
+
+---
+
+### 2. Value Generators / Transformers
+
+Value generators produce dynamic values. Transformers convert input to output.
+
+**Registration Array:** `valueGenerators`
+
+**Interface:** `ValueGeneratorDefinition`
+
+```typescript
+interface ValueGeneratorDefinition {
+  id: string              // Unique identifier
+  displayName?: string    // Human-readable name
+  description?: string    // What the generator does
+  noOfParams: 0 | 1       // 0 = no input, 1 = takes input
+  function: Function      // The generator function
+  enabled: boolean
+  tested: boolean
+  deprecated?: boolean
+}
+```
+
+**Example - Generator (no params):**
+
+```typescript
+// src/generator/uuid.ts
+export function generateUuid() {
+  return crypto.randomUUID()
+}
+
+export const uuidGenerator: ValueGeneratorDefinition = {
+  id: 'my-lib-uuid',
+  displayName: 'UUID',
+  description: 'Generate a random UUID',
+  noOfParams: 0,
+  function: generateUuid,
+  enabled: true,
+  tested: true,
+}
+```
+
+**Example - Transformer (1 param):**
+
+```typescript
+// src/transformer/uppercase.ts
+export function toUpperCase(value: string) {
+  return value?.toUpperCase() ?? ''
+}
+
+export const upperCaseTransformer: ValueGeneratorDefinition = {
+  id: 'my-lib-uppercase',
+  displayName: 'To Upper Case',
+  description: 'Convert string to uppercase',
+  noOfParams: 1,
+  function: toUpperCase,
+  enabled: true,
+  tested: true,
+}
+```
+
+**Rules:**
+- Must return a value
+- Accept 0 or 1 parameter only
+- Handle undefined/null inputs gracefully
+
+---
+
+### 3. API Hooks
+
+Hooks run before requests or after responses to modify data.
+
+**Registration Array:** `hooks`
+
+**Interface:** `HookDefinition`
+
+```typescript
+interface HookDefinition {
+  id: string
+  displayName: string     // Required for hooks
+  description?: string
+  type: 'beforeRequest' | 'afterRequest'
+  function: Function
+  enabled: boolean
+  tested: boolean
+  deprecated?: boolean
+}
+```
+
+**Example - beforeRequest Hook:**
+
+```typescript
+// src/hook/addAuthHeader.ts
+export async function addAuthHeader() {
+  $request.headers['Authorization'] = `Bearer ${$context.token}`
+  $request.headers['X-Request-Id'] = crypto.randomUUID()
+}
+
+export const addAuthHeaderHook: HookDefinition = {
+  id: 'my-lib-add-auth-header',
+  displayName: 'Add Auth Header',
+  description: 'Adds authorization header from context',
+  type: 'beforeRequest',
+  function: addAuthHeader,
+  enabled: true,
+  tested: true,
+}
+```
+
+**Example - afterResponse Hook:**
+
+```typescript
+// src/hook/extractToken.ts
+export async function extractToken() {
+  if ($response.data?.token) {
+    $context.token = $response.data.token
   }
+  $context.lastStatus = $response.status
+}
+
+export const extractTokenHook: HookDefinition = {
+  id: 'my-lib-extract-token',
+  displayName: 'Extract Token',
+  description: 'Extracts token from response to context',
+  type: 'afterRequest',
+  function: extractToken,
+  enabled: true,
+  tested: true,
 }
 ```
 
-### 6. Value Function Return Requirement
+**Available in beforeRequest:**
+- `$request` - Modify headers, query, body
+- `$context` - Read/write shared data
 
-Value functions **must return a value**. If no value is returned, `undefined` will be returned by default, which may lead to unexpected behaviors in test cases.
+**Available in afterResponse:**
+- `$request` - Read original request
+- `$response` - Read/modify response data
+- `$context` - Read/write shared data
 
-Example:
+---
 
-```javascript
-function generateRandomNumber() {
-  return Math.floor(Math.random() * 100);
+## Registration in index.ts
+
+Add your components to the registration arrays:
+
+```typescript
+// src/index.ts
+import { isPositiveNumberAssertion } from './assertion/isPositiveNumber'
+import { uuidGenerator } from './generator/uuid'
+import { addAuthHeaderHook } from './hook/addAuthHeader'
+
+const assertions: AssertionDefinition[] = [
+  isPositiveNumberAssertion,
+  // ... more assertions
+]
+
+const valueGenerators: ValueGeneratorDefinition[] = [
+  uuidGenerator,
+  // ... more generators
+]
+
+const hooks: HookDefinition[] = [
+  addAuthHeaderHook,
+  // ... more hooks
+]
+```
+
+## Async Support
+
+All function types support async/await:
+
+```typescript
+async function validateWithApi(value: any) {
+  const result = await fetch(`https://api.example.com/validate?v=${value}`)
+  const data = await result.json()
+  
+  $addAssertionResult({
+    passed: data.valid,
+    leftValue: value,
+    message: data.message,
+  })
 }
 ```
 
 ## Best Practices
 
-- **Use Clear and Consistent Naming:**
+### ID Naming
+- Use a prefix to avoid conflicts: `my-lib-function-name`
+- IDs are permanent - once used in tests, don't change them
 
-  - Function names should be descriptive and follow a consistent pattern.
+### Deprecation
+- Never remove functions used in existing tests
+- Set `deprecated: true` to hide from UI while keeping existing tests working
 
-- **Handle All Edge Cases:**
+### Error Handling
+- Handle null/undefined inputs gracefully
+- Provide meaningful error messages
 
-  - Ensure functions handle null, undefined, and edge values gracefully.
-
-- **Document Your Functions:**
-
-  - Add clear JSDoc comments to explain the purpose and expected behavior.
-
-- **Avoid Breaking Changes:**
-
-  - Once enabled, do not remove functions used in existing tests. Instead, mark them as deprecated.
-
-- **Test Thoroughly Before Enabling:**
-
-  - Ensure all functions are well-tested before enabling them in the platform.
+### Testing
+- Set `tested: true` only after thorough testing
+- See `TESTING.md` for testing patterns
 
 ## Summary Table
 
-| Function Type | Parameter Rules   | Return Type         | Mandatory API Call      |
-| ------------- | ----------------- | ------------------- | ----------------------- |
-| Assertion     | 1 or 2 parameters | None                | `$addAssertionResult()` |
-| Value         | 0 or 1 parameter  | Must return a value | Not required            |
-
-By following these guidelines, developers can ensure their functions integrate smoothly with ReAPI, enhancing test capabilities while maintaining robustness and consistency.
+| Component      | Array            | Params    | Must Return | Platform API            |
+| -------------- | ---------------- | --------- | ----------- | ----------------------- |
+| Assertion      | `assertions`     | 1 or 2    | No          | `$addAssertionResult()` |
+| Value Generator| `valueGenerators`| 0 or 1    | Yes         | None                    |
+| Hook           | `hooks`          | 0         | No          | Modify `$request`, `$response`, `$context` |
