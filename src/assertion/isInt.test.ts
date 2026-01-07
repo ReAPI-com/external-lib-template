@@ -15,7 +15,11 @@ describe('isInt', () => {
   beforeEach(() => {
     assertionResults = []
     // @ts-ignore - globalThis typing
-    globalThis.$addAssertionResult = (result: { passed: boolean; leftValue?: any; message?: string }) => {
+    globalThis.$addAssertionResult = (result: {
+      passed: boolean
+      leftValue?: any
+      message?: string
+    }) => {
       assertionResults.push(result)
     }
   })
