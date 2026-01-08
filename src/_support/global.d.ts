@@ -86,9 +86,26 @@ declare global {
     displayName: string
     description?: string
     /** When the hook runs: before sending request or after receiving response */
-    type: 'beforeRequest' | 'afterRequest'
+    type: 'BEFORE_REQUEST' | 'AFTER_RESPONSE'
     /** The hook function implementation */
     function: Function
+  }
+
+  /**
+   * Definition for a utility class.
+   * Utilities provide helper methods that can be used in scripts.
+   */
+  interface UtilityDefinition {
+    /** Unique identifier for this utility (typically the class name) */
+    id: string
+    /** Display name shown in the UI */
+    displayName?: string
+    /** Description of the utility */
+    description?: string
+    /** The class name */
+    className: string
+    /** List of static method names available on this utility */
+    methods: string[]
   }
 
   interface ApiRequest {

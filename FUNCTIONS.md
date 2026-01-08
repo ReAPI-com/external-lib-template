@@ -1,6 +1,6 @@
 # Writing Functions Compatible with ReAPI Platform
 
-ReAPI allows developers to extend its capabilities by writing custom assertions, value generators, and API hooks.
+ReAPI allows developers to extend its capabilities by writing custom assertions, value generators, API hooks, and utility classes.
 
 ## Core Types
 
@@ -9,6 +9,7 @@ See [`src/_support/global.d.ts`](src/_support/global.d.ts) for type definitions:
 - `AssertionDefinition` - Custom assertion function metadata
 - `ValueGeneratorDefinition` - Value generator/transformer metadata
 - `HookDefinition` - API hook metadata
+- `UtilityDefinition` - Utility class metadata
 
 ## Platform-Injected Globals
 
@@ -19,11 +20,44 @@ See [`src/_support/global.d.ts`](src/_support/global.d.ts) for type definitions:
 | `$context`            | Hooks               | Shared context for data passing |
 | `$addAssertionResult` | Assertions          | Report assertion pass/fail      |
 
+## Component Registration
+
+Components are registered using wrapper functions that attach metadata. The build script automatically scans and generates the registration arrays.
+
+### Registration Helpers
+
+Import from `src/_support/decorators.ts`:
+
+```typescript
+import { assertion, valueGenerator, hook, Utility } from '../_support/decorators'
+```
+
+---
+
 ## Component Types
 
 ### 1. Assertion Functions
 
 Assertions validate data and report results via `$addAssertionResult()`.
+
+**Registration Pattern:**
+
+```typescript
+import { assertion } from '../_support/decorators'
+
+export const isInt = assertion(
+  {
+    id: 'my-lib-is-int',
+    displayName: 'Is Integer',
+    description: 'Validates that the value is an integer',
+    noOfParams: 1,
+  },
+  function isInt(value: number) {
+    const passed = Number.isInteger(value)
+    $addAssertionResult({ passed, leftValue: value, message: '...' })
+  }
+)
+```
 
 **Examples by parameter count:**
 
@@ -45,6 +79,24 @@ Assertions validate data and report results via `$addAssertionResult()`.
 
 Value generators produce dynamic values. Transformers convert input to output.
 
+**Registration Pattern:**
+
+```typescript
+import { valueGenerator } from '../_support/decorators'
+
+export const now = valueGenerator(
+  {
+    id: 'my-lib-now',
+    displayName: 'Now',
+    description: 'Get the current date and time',
+    noOfParams: 0,
+  },
+  function now() {
+    return new Date().toISOString()
+  }
+)
+```
+
 **Examples:**
 
 | Type        | Params | Example               | Source                                                       |
@@ -64,6 +116,24 @@ Value generators produce dynamic values. Transformers convert input to output.
 
 Hooks run before requests or after responses to modify data.
 
+**Registration Pattern:**
+
+```typescript
+import { hook } from '../_support/decorators'
+
+export const addAuth = hook(
+  {
+    id: 'my-lib-add-auth',
+    displayName: 'Add Authorization',
+    description: 'Adds auth header to request',
+    type: 'BEFORE_REQUEST',
+  },
+  async function addAuth() {
+    $request.headers['Authorization'] = 'Bearer ' + $context.token
+  }
+)
+```
+
 **Examples:**
 
 | Type          | Example                 | Source                                                               |
@@ -78,14 +148,58 @@ Hooks run before requests or after responses to modify data.
 
 ---
 
-## Registration
+### 4. Utility Classes
 
-Add components to the arrays in [`src/index.ts`](src/index.ts):
+Utility classes provide helper methods available globally in scripts.
+
+**Registration Pattern:**
 
 ```typescript
-const assertions: AssertionDefinition[] = [...]
-const valueGenerators: ValueGeneratorDefinition[] = [...]
-const hooks: HookDefinition[] = [...]
+import { Utility } from '../_support/decorators'
+
+@Utility({
+  id: 'StringUtils',
+  displayName: 'String Utilities',
+  description: 'String manipulation helpers',
+})
+export class StringUtils {
+  static toUpperCase(str: string) {
+    return str.toUpperCase()
+  }
+}
+```
+
+**Examples:**
+
+| Utility        | Source                                                   |
+| -------------- | -------------------------------------------------------- |
+| `GeoUtils`     | [`src/utility/GeoUtils.ts`](src/utility/GeoUtils.ts)     |
+| `StringUtils`  | [`src/utility/StringUtils.ts`](src/utility/StringUtils.ts) |
+| `NumberUtils`  | [`src/utility/NumberUtils.ts`](src/utility/NumberUtils.ts) |
+
+**Rules:**
+
+- All methods must be `static`
+- Class is available globally as `CustomLib.StringUtils.methodName()`
+
+---
+
+## Build Process
+
+The build process automatically discovers and registers components:
+
+```bash
+pnpm build
+# 1. Scans for assertion(), valueGenerator(), hook() calls
+# 2. Scans for @Utility decorated classes
+# 3. Generates src/_generated/registry.ts
+# 4. Bundles everything into dist/
+```
+
+You can run the generator separately:
+
+```bash
+pnpm generate  # Only regenerate registry
 ```
 
 ## Best Practices

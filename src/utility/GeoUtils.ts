@@ -1,10 +1,16 @@
 import { Coord } from "@turf/helpers";
 import * as turf from "@turf/turf";
+import { Utility } from "../_support/decorators";
 
 /**
  * Utility class providing static helper methods for mathematical operations
  * @class
  */
+@Utility({
+  id: "GeoUtils",
+  displayName: "Geo Utilities",
+  description: "Geographic calculation utilities",
+})
 export class GeoUtils {
   /**
    * Generates a random integer between min and max, then subtracts twice the max value

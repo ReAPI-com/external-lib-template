@@ -6,6 +6,22 @@ This guide explains how to write tests for each component type in your ReAPI ext
 
 When your library runs in ReAPI, it executes in a sandboxed environment (Web Worker or Node VM) with platform-injected globals like `$request`, `$response`, `$context`, and `$addAssertionResult`. Your tests need to mock these globals to verify your code works correctly before deployment.
 
+## Component Registration is Transparent
+
+Components registered with `assertion()`, `valueGenerator()`, `hook()` wrappers preserve the same function signature. Your tests call the function directly:
+
+```typescript
+// Component definition
+export const isInt = assertion(
+  { id: 'is-int', noOfParams: 1 },
+  function isInt(value: number) { /* ... */ }
+)
+
+// Test - call it like a regular function
+import { isInt } from './isInt'
+isInt(42)  // Works exactly the same
+```
+
 ## Test Patterns by Component Type
 
 ### 1. Assertion Functions

@@ -1,30 +1,26 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs'
+import { valueGenerator } from '../_support/decorators'
 
-export function now() {
-  return dayjs().toISOString();
-}
-
-export function nowTimestamp() {
-  return new Date().getTime();
-}
-
-export const dateTimeGeneratorFunctions: ValueGeneratorDefinition[] = [
+export const now = valueGenerator(
   {
-    id: "reapi-now",
-    displayName: "Now",
-    description: "Get the current date and time in ISO format",
-    function: now,
+    id: 'reapi-now',
+    displayName: 'Now',
+    description: 'Get the current date and time in ISO format',
     noOfParams: 0,
-    enabled: true,
-    tested: true,
   },
+  function now() {
+    return dayjs().toISOString()
+  }
+)
+
+export const nowTimestamp = valueGenerator(
   {
-    id: "reapi-now-timestamp",
-    displayName: "Now Timestamp",
-    description: "Get the current date and time as a timestamp",
-    function: nowTimestamp,
+    id: 'reapi-now-timestamp',
+    displayName: 'Now Timestamp',
+    description: 'Get the current date and time as a timestamp',
     noOfParams: 0,
-    enabled: true,
-    tested: true,
   },
-];
+  function nowTimestamp() {
+    return new Date().getTime()
+  }
+)

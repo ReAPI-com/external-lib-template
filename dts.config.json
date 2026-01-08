@@ -8,15 +8,12 @@
       "filePath": "./src/_support/build.ts",
       "outFile": "./dist/bundle.d.ts",
       "libraries": {
-        "inlinedLibraries": [
-          "@turf/helpers",
-          "geojson"
-        ]
+        "inlinedLibraries": []
       },
       "output": {
         "inlineDeclareGlobals": true,
         "inlineDeclareExternals": false,
-        "exportReferencedTypes": true,
+        "exportReferencedTypes": false,
         "noBanner": true
       }
     }

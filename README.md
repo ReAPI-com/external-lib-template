@@ -65,7 +65,54 @@ The bundle name must be unique across your ReAPI environment. In this template, 
 - `rollup.config.js` for bundle configuration
 - `index.ts` for global type declarations
 
-### 2. Export and Type Declaration Pattern
+### 2. Component Registration Pattern
+
+Components are registered using wrapper functions that attach metadata. The build script automatically scans and generates the registration arrays.
+
+**For function components** (assertions, generators, hooks):
+
+```typescript
+import { assertion, valueGenerator, hook } from '../_support/decorators'
+
+// Assertion
+export const isInt = assertion(
+  { id: 'my-is-int', displayName: 'Is Integer', noOfParams: 1 },
+  function isInt(value: number) {
+    /* ... */
+  }
+)
+
+// Value Generator
+export const now = valueGenerator(
+  { id: 'my-now', displayName: 'Now', noOfParams: 0 },
+  function now() {
+    return new Date().toISOString()
+  }
+)
+
+// Hook
+export const addAuth = hook(
+  { id: 'my-add-auth', type: 'BEFORE_REQUEST' },
+  async function addAuth() {
+    /* ... */
+  }
+)
+```
+
+**For utility classes** (use decorator):
+
+```typescript
+import { Utility } from '../_support/decorators'
+
+@Utility({ id: 'StringUtils', displayName: 'String Utilities' })
+export class StringUtils {
+  static toUpperCase(str: string) {
+    return str.toUpperCase()
+  }
+}
+```
+
+### 3. Export and Type Declaration Pattern
 
 Always follow this pattern when exposing your APIs `src/index.ts`:
 

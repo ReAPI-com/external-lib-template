@@ -1,14 +1,14 @@
-import { isCloseToAssertion } from './assertion/isCloseTo'
-import { isGeoLocationAssertion } from './assertion/isGeoLocation'
-import { isGreaterThanAssertion } from './assertion/isGreaterThan'
-import { isIntAssertion } from './assertion/isInt'
-import { dateTimeGeneratorFunctions } from './generator/dateTime'
-import { modifyRequestParamsHook } from './hook/modifyRequestParams'
-import { modifyResponseDataHook } from './hook/modifyResponseData'
-import { dateTimeTransformerFunctions } from './transformer/dateTime'
-import { GeoUtils } from './utility/GeoUtils'
-import { NumberUtils } from './utility/NumberUtils'
-import { StringUtils } from './utility/StringUtils'
+// Import auto-generated component registrations
+import {
+  assertions,
+  valueGenerators,
+  hooks,
+  utilities,
+  GeoUtils,
+  NumberUtils,
+  StringUtils,
+  DateTimeUtils,
+} from './_generated/registry'
 
 // This is required for type declaration to work on the web editor
 declare global {
@@ -17,6 +17,7 @@ declare global {
     GeoUtils: typeof GeoUtils
     StringUtils: typeof StringUtils
     NumberUtils: typeof NumberUtils
+    DateTimeUtils: typeof DateTimeUtils
 
     // ========================================
     // RESERVED: ReAPI Component Registrations
@@ -26,6 +27,7 @@ declare global {
     assertions: AssertionDefinition[]
     valueGenerators: ValueGeneratorDefinition[]
     hooks: HookDefinition[]
+    utilities: UtilityDefinition[]
 
     // ========================================
     // RESERVED: ReAPI Component Accessors
@@ -37,28 +39,6 @@ declare global {
     getApiHook: (id: string) => Function | undefined
   }
 }
-
-// ============================================================================
-// RESERVED: Component Registration Arrays
-// These arrays are scanned by ReAPI to discover and register your components.
-// Add your custom components to these arrays.
-// ============================================================================
-const assertions: AssertionDefinition[] = [
-  // 1-param assertions
-  isIntAssertion,
-  isGeoLocationAssertion,
-  // 2-param assertions
-  isGreaterThanAssertion,
-  // 3-param assertions
-  isCloseToAssertion,
-]
-
-const valueGenerators: ValueGeneratorDefinition[] = [
-  ...dateTimeGeneratorFunctions,
-  ...dateTimeTransformerFunctions,
-]
-
-const hooks: HookDefinition[] = [modifyRequestParamsHook, modifyResponseDataHook]
 
 // ============================================================================
 // RESERVED: Component Accessor Functions
@@ -81,10 +61,12 @@ export {
   assertions,
   valueGenerators,
   hooks,
+  utilities,
   GeoUtils,
+  NumberUtils,
+  StringUtils,
+  DateTimeUtils,
   getApiHook,
   getAssertionFunction,
   getValueFunction,
-  NumberUtils,
-  StringUtils,
 }
