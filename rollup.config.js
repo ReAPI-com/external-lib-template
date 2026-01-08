@@ -19,9 +19,9 @@ export default defineConfig({
     typescript({
       tsconfig: "./tsconfig.json",
     }),
-    // terser({
-    //   keep_classnames: true,
-    //   keep_fnames: true,
-    // }),
+    terser({
+      keep_classnames: true,
+      keep_fnames: true,
+    }),
   ],
 });
