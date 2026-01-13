@@ -13,7 +13,8 @@
     "generate": "node scripts/generate-registry.js",
     "build": "npm run clean && npm run generate && rollup -c && pnpm build:type",
     "build:type": "dts-bundle-generator --config dts.config.json",
-    "test": "vitest"
+    "test": "vitest",
+    "serve": "npx http-server dist -p 8080 --cors -o"
   },
   "publishConfig": {
     "access": "public"
