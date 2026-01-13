@@ -132,6 +132,69 @@ declare global {
 
   function $addAssertionResult(result: AssertionResult): void
   function $setGeneratedValue(value: any): void
+
+  // ============================================================================
+  // EXTERNAL TEST CASE RUNTIME GLOBALS
+  // These globals are injected by ReAPI when executing external test cases
+  // ============================================================================
+
+  /**
+   * Variables from VarGroup (merged with inheritance chain)
+   * Access: $vars.baseUrl, $vars.userId, etc.
+   */
+  const $vars: Record<string, any>
+
+  /**
+   * Secrets from VarGroup (decrypted at runtime)
+   * Access: $secrets.API_KEY, $secrets.dbPassword, etc.
+   * Security: Never logged, never in code, injected at runtime
+   */
+  const $secrets: Record<string, any>
+
+  /**
+   * Resolved server configuration
+   * Derived from selected Server config
+   */
+  const $server: {
+    baseUrl: string
+    name: string
+    id: string
+  }
+
+  /**
+   * Resolved auth configuration (pre-computed headers/token)
+   * Derived from selected Auth config
+   * For convenience, auth headers are pre-computed so developers
+   * don't need to handle different auth types manually.
+   */
+  const $auth: {
+    type: 'bearer' | 'apiKey' | 'basic' | 'none'
+    headers: Record<string, string>
+    token?: string
+    apiKey?: string
+    apiKeyHeader?: string
+  }
+
+  /**
+   * Definition for a test case.
+   * Test cases are functions that perform API calls and assertions.
+   */
+  interface TestCaseDefinition {
+    /** Unique identifier for this test case */
+    id: string
+    /** Display name shown in the UI */
+    name: string
+    /** Description of what the test case validates */
+    description?: string
+    /** Tags for filtering and organization (e.g., ['smoke', 'auth']) */
+    tags?: string[]
+    /** Priority level (e.g., 1, 2, 3) */
+    priority?: number
+    /** Timeout in milliseconds (default: 30000) */
+    timeout?: number
+    /** The test function implementation */
+    function: () => Promise<void>
+  }
 }
 
 export {}

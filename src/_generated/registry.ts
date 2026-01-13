@@ -17,6 +17,11 @@ import { StringUtils } from '../utility/StringUtils'
 import { NumberUtils } from '../utility/NumberUtils'
 import { GeoUtils } from '../utility/GeoUtils'
 import { DateTimeUtils } from '../utility/DateTimeUtils'
+import { validateEnvironmentVars } from '../test-cases/validation'
+import { validateUserData } from '../test-cases/validation'
+import { healthCheck } from '../test-cases/api'
+import { authenticatedRequest } from '../test-cases/api'
+import { loginWithCredentials } from '../test-cases/api'
 
 export const assertions: AssertionDefinition[] = [
   {
@@ -155,6 +160,54 @@ export const utilities: UtilityDefinition[] = [
     description: 'Date and time manipulation utilities',
     className: 'DateTimeUtils',
     methods: ['formatDateTime', 'dateTimeFromTimestamp'],
+  }
+]
+
+export const testCases: TestCaseDefinition[] = [
+  {
+    id: 'validate-env-vars',
+    name: 'Validate Environment Variables',
+    description: 'Ensures required environment variables are present',
+    tags: ['smoke', 'validation'],
+    priority: 1,
+    timeout: 5000,
+    function: validateEnvironmentVars,
+  },
+  {
+    id: 'validate-user-data',
+    name: 'Validate User Data',
+    description: 'Validates user data from environment variables',
+    tags: ['validation', 'user'],
+    priority: 2,
+    timeout: 5000,
+    function: validateUserData,
+  },
+  {
+    id: 'api-health-check',
+    name: 'API Health Check',
+    description: 'Checks if the API server is responding',
+    tags: ['smoke', 'api', 'health'],
+    priority: 1,
+    timeout: 10000,
+    function: healthCheck,
+  },
+  {
+    id: 'api-authenticated-request',
+    name: 'Authenticated API Request',
+    description: 'Makes an authenticated request using $auth headers',
+    tags: ['api', 'auth'],
+    priority: 2,
+    timeout: 10000,
+    function: authenticatedRequest,
+  },
+  {
+    id: 'api-login-credentials',
+    name: 'Login with Credentials',
+    description: 'Tests login endpoint with credentials from $vars and $secrets',
+    tags: ['api', 'auth', 'login'],
+    priority: 2,
+    timeout: 10000,
+    function: loginWithCredentials,
   }
 ]
 

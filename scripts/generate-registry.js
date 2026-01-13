@@ -29,6 +29,7 @@ const collected = {
   valueGenerators: [],
   hooks: [],
   utilities: [],
+  testCases: [],
 }
 
 async function scanComponents() {
@@ -98,6 +99,7 @@ async function scanComponents() {
   console.log(`  - Value Generators: ${collected.valueGenerators.length}`)
   console.log(`  - Hooks: ${collected.hooks.length}`)
   console.log(`  - Utilities: ${collected.utilities.length}`)
+  console.log(`  - Test Cases: ${collected.testCases.length}`)
 }
 
 function processCallExpression(exportName, callExpr, file) {
@@ -126,6 +128,9 @@ function processCallExpression(exportName, callExpr, file) {
       break
     case 'hook':
       collected.hooks.push(meta)
+      break
+    case 'testCase':
+      collected.testCases.push(meta)
       break
   }
 }
@@ -190,6 +195,8 @@ function extractValue(node) {
       return node.value
     case 'NullLiteral':
       return null
+    case 'ArrayExpression':
+      return node.elements.map((el) => extractValue(el)).filter((v) => v !== undefined)
     default:
       return undefined
   }
@@ -205,6 +212,7 @@ function generateRegistryCode() {
     ...collected.valueGenerators,
     ...collected.hooks,
     ...collected.utilities,
+    ...collected.testCases,
   ]
 
   for (const c of allComponents) {
@@ -285,6 +293,22 @@ ${collected.utilities
     description: '${u.description || ''}',
     className: '${u._name}',
     methods: [${u._methods.map((m) => `'${m}'`).join(', ')}],
+  }`
+  )
+  .join(',\n')}
+]
+
+export const testCases: TestCaseDefinition[] = [
+${collected.testCases
+  .map(
+    (t) => `  {
+    id: '${t.id}',
+    name: '${t.name}',
+    description: '${t.description || ''}',
+    tags: [${(t.tags || []).map((tag) => `'${tag}'`).join(', ')}],
+    priority: ${t.priority ?? 0},
+    timeout: ${t.timeout ?? 30000},
+    function: ${t._name},
   }`
   )
   .join(',\n')}

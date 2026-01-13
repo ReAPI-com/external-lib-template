@@ -41,6 +41,15 @@ export interface UtilityMeta {
   description?: string
 }
 
+export interface TestCaseMeta {
+  id: string
+  name: string
+  description?: string
+  tags?: string[]
+  priority?: number
+  timeout?: number
+}
+
 // Type for functions with attached metadata
 export interface ComponentFunction<T> extends Function {
   __meta__: T
@@ -99,4 +108,18 @@ export function Utility(meta: UtilityMeta) {
     ;(target as any).__type__ = 'utility'
     return target
   }
+}
+
+/**
+ * Registers a test case function with metadata.
+ * Usage: export const myTest = testCase({ id: 'my-test', name: 'My Test' }, async () => { ... })
+ */
+export function testCase<F extends () => Promise<void>>(
+  meta: TestCaseMeta,
+  fn: F
+): F & ComponentFunction<TestCaseMeta> {
+  const component = fn as F & ComponentFunction<TestCaseMeta>
+  component.__meta__ = meta
+  component.__type__ = 'testCase'
+  return component
 }

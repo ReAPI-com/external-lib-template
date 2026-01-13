@@ -4,6 +4,7 @@ import {
   valueGenerators,
   hooks,
   utilities,
+  testCases,
   GeoUtils,
   NumberUtils,
   StringUtils,
@@ -28,6 +29,7 @@ declare global {
     valueGenerators: ValueGeneratorDefinition[]
     hooks: HookDefinition[]
     utilities: UtilityDefinition[]
+    testCases: TestCaseDefinition[]
 
     // ========================================
     // RESERVED: ReAPI Component Accessors
@@ -37,6 +39,7 @@ declare global {
     getAssertionFunction: (id: string) => Function | undefined
     getValueFunction: (id: string) => Function | undefined
     getApiHook: (id: string) => Function | undefined
+    getTestCase: (id: string) => TestCaseDefinition | undefined
   }
 }
 
@@ -57,11 +60,16 @@ const getApiHook = (id: string) => {
   return hooks.find((fn) => fn.id === id)?.function
 }
 
+const getTestCase = (id: string) => {
+  return testCases.find((tc) => tc.id === id)
+}
+
 export {
   assertions,
   valueGenerators,
   hooks,
   utilities,
+  testCases,
   GeoUtils,
   NumberUtils,
   StringUtils,
@@ -69,4 +77,5 @@ export {
   getApiHook,
   getAssertionFunction,
   getValueFunction,
+  getTestCase,
 }
