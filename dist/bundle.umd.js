@@ -20363,16 +20363,17 @@
         priority: 1,
         timeout: 10000,
     }, () => __awaiter(void 0, void 0, void 0, function* () {
+        const baseUrl = ($server === null || $server === void 0 ? void 0 : $server.url) || ($server === null || $server === void 0 ? void 0 : $server.baseUrl);
         // Verify $server is injected
         $addAssertionResult({
-            passed: typeof $server !== 'undefined' && !!$server.baseUrl,
+            passed: typeof $server !== 'undefined' && !!baseUrl,
             leftValue: typeof $server,
             rightValue: 'object',
-            message: '$server should be defined with baseUrl',
+            message: '$server should be defined with url',
         });
         try {
             // Make a simple GET request to the health endpoint
-            const response = yield fetch(`${$server.baseUrl}/health`, {
+            const response = yield fetch(`${baseUrl}/health`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -20414,6 +20415,7 @@
         priority: 2,
         timeout: 10000,
     }, () => __awaiter(void 0, void 0, void 0, function* () {
+        const baseUrl = ($server === null || $server === void 0 ? void 0 : $server.url) || ($server === null || $server === void 0 ? void 0 : $server.baseUrl);
         // Verify $auth is injected
         $addAssertionResult({
             passed: typeof $auth !== 'undefined' && !!$auth.headers,
@@ -20423,7 +20425,7 @@
         });
         try {
             // Make authenticated request to user profile endpoint
-            const response = yield fetch(`${$server.baseUrl}/api/user/profile`, {
+            const response = yield fetch(`${baseUrl}/api/user/profile`, {
                 method: 'GET',
                 headers: Object.assign({ 'Content-Type': 'application/json' }, $auth.headers),
             });
@@ -20466,6 +20468,7 @@
         priority: 2,
         timeout: 10000,
     }, () => __awaiter(void 0, void 0, void 0, function* () {
+        const baseUrl = ($server === null || $server === void 0 ? void 0 : $server.url) || ($server === null || $server === void 0 ? void 0 : $server.baseUrl);
         // Verify all required globals are present
         $addAssertionResult({
             passed: typeof $server !== 'undefined' && typeof $vars !== 'undefined',
@@ -20487,7 +20490,7 @@
         }
         try {
             // Make login request
-            const response = yield fetch(`${$server.baseUrl}/api/auth/login`, {
+            const response = yield fetch(`${baseUrl}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

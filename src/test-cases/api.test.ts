@@ -31,6 +31,7 @@ describe('API Test Cases', () => {
   describe('healthCheck', () => {
     beforeEach(() => {
       ;(global as any).$server = {
+        url: 'https://api.example.com',
         baseUrl: 'https://api.example.com',
         name: 'Test Server',
         id: 'server-123',
@@ -128,16 +129,19 @@ describe('API Test Cases', () => {
   describe('authenticatedRequest', () => {
     beforeEach(() => {
       ;(global as any).$server = {
+        url: 'https://api.example.com',
         baseUrl: 'https://api.example.com',
         name: 'Test Server',
         id: 'server-123',
       }
       ;(global as any).$auth = {
-        type: 'bearer',
+        auth: {
+          type: 'bearer',
+          token: 'test-token-123',
+        },
         headers: {
           Authorization: 'Bearer test-token-123',
         },
-        token: 'test-token-123',
       }
     })
 
@@ -238,6 +242,7 @@ describe('API Test Cases', () => {
   describe('loginWithCredentials', () => {
     beforeEach(() => {
       ;(global as any).$server = {
+        url: 'https://api.example.com',
         baseUrl: 'https://api.example.com',
         name: 'Test Server',
         id: 'server-123',

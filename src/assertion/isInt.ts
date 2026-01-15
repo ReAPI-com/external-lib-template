@@ -18,7 +18,7 @@ export const isInt = assertion(
     description: 'Validates that the value is an integer',
     noOfParams: 1,
   },
-  function isInt(value: number) {
+  function isInt(value: unknown) {
     // Validate parameter type using Zod
     const parseResult = paramSchema.safeParse(value)
 

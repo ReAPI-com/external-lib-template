@@ -13,17 +13,18 @@ export const healthCheck = testCase(
     timeout: 10000,
   },
   async () => {
+    const baseUrl = $server?.url || $server?.baseUrl
     // Verify $server is injected
     $addAssertionResult({
-      passed: typeof $server !== 'undefined' && !!$server.baseUrl,
+      passed: typeof $server !== 'undefined' && !!baseUrl,
       leftValue: typeof $server,
       rightValue: 'object',
-      message: '$server should be defined with baseUrl',
+      message: '$server should be defined with url',
     })
 
     try {
       // Make a simple GET request to the health endpoint
-      const response = await fetch(`${$server.baseUrl}/health`, {
+      const response = await fetch(`${baseUrl}/health`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -71,6 +72,7 @@ export const authenticatedRequest = testCase(
     timeout: 10000,
   },
   async () => {
+    const baseUrl = $server?.url || $server?.baseUrl
     // Verify $auth is injected
     $addAssertionResult({
       passed: typeof $auth !== 'undefined' && !!$auth.headers,
@@ -81,7 +83,7 @@ export const authenticatedRequest = testCase(
 
     try {
       // Make authenticated request to user profile endpoint
-      const response = await fetch(`${$server.baseUrl}/api/user/profile`, {
+      const response = await fetch(`${baseUrl}/api/user/profile`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -134,6 +136,7 @@ export const loginWithCredentials = testCase(
     timeout: 10000,
   },
   async () => {
+    const baseUrl = $server?.url || $server?.baseUrl
     // Verify all required globals are present
     $addAssertionResult({
       passed: typeof $server !== 'undefined' && typeof $vars !== 'undefined',
@@ -159,7 +162,7 @@ export const loginWithCredentials = testCase(
 
     try {
       // Make login request
-      const response = await fetch(`${$server.baseUrl}/api/auth/login`, {
+      const response = await fetch(`${baseUrl}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

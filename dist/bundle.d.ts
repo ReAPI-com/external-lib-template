@@ -143,10 +143,52 @@ declare global {
 	 * Resolved server configuration
 	 * Derived from selected Server config
 	 */
-	const $server: {
-		baseUrl: string;
-		name: string;
+	interface ExternalTestCaseServer {
 		id: string;
+		name: string;
+		/**
+		 * Canonical server URL (aligned with foundation `RequestServer.url`)
+		 */
+		url: string;
+		/**
+		 * @deprecated Use `url` instead. Kept for backward-compatibility with early template examples.
+		 * In runtime, `baseUrl` mirrors `url`.
+		 */
+		baseUrl: string;
+	}
+	const $server: ExternalTestCaseServer;
+	// ============================================================================
+	// AUTH TYPES (aligned with foundation union types)
+	// ============================================================================
+	type HttpParamPosition = "path" | "query" | "header" | "cookie";
+	type HttpAuthType = "basic" | "bearer" | "apiKey";
+	interface BasicAuth {
+		type: "basic";
+		username: string;
+		password: string;
+	}
+	interface BearerAuth {
+		type: "bearer";
+		token: string;
+	}
+	interface ApiKeyAuth {
+		type: "apiKey";
+		in: HttpParamPosition;
+		key: string;
+		token: string;
+	}
+	type HttpAuthObject = BasicAuth | BearerAuth | ApiKeyAuth;
+	/**
+	 * External test cases receive a union-typed auth object plus pre-computed headers.
+	 * `auth` is aligned with foundation's `HttpAuthObject` union.
+	 * If no auth is selected, `auth` is null.
+	 */
+	type ExternalTestCaseAuth = {
+		auth: null;
+		headers: Record<string, string>;
+	} | {
+		auth: HttpAuthObject;
+		headers: Record<string, string>;
 	};
 	/**
 	 * Resolved auth configuration (pre-computed headers/token)
@@ -154,13 +196,7 @@ declare global {
 	 * For convenience, auth headers are pre-computed so developers
 	 * don't need to handle different auth types manually.
 	 */
-	const $auth: {
-		type: "bearer" | "apiKey" | "basic" | "none";
-		headers: Record<string, string>;
-		token?: string;
-		apiKey?: string;
-		apiKeyHeader?: string;
-	};
+	const $auth: ExternalTestCaseAuth;
 	/**
 	 * Definition for a test case.
 	 * Test cases are functions that perform API calls and assertions.
