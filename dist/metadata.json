@@ -1,0 +1,197 @@
+{
+  "assertions": [
+    {
+      "id": "reapi-is-int",
+      "displayName": "Is Integer",
+      "description": "Validates that the value is an integer",
+      "noOfParams": 1,
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    },
+    {
+      "id": "reapi-is-greater-than",
+      "displayName": "Is Greater Than",
+      "description": "Checks if the actual value is greater than the expected value",
+      "noOfParams": 2,
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    },
+    {
+      "id": "reapi-is-geo-location",
+      "displayName": "Is Geo Location",
+      "description": "Validates that the value is a valid geo location",
+      "noOfParams": 1,
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    },
+    {
+      "id": "reapi-is-close-to",
+      "displayName": "Is Close To",
+      "description": "Checks if the actual value is within a delta of the expected value",
+      "noOfParams": 3,
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    }
+  ],
+  "valueGenerators": [
+    {
+      "id": "reapi-date-time-from-timestamp",
+      "displayName": "Date Time From Timestamp",
+      "description": "Get the date and time from a timestamp",
+      "noOfParams": 1,
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    },
+    {
+      "id": "reapi-format-timestamp",
+      "displayName": "Format Timestamp",
+      "description": "Format a timestamp to a date and time string",
+      "noOfParams": 1,
+      "enabled": false,
+      "tested": false,
+      "deprecated": false
+    },
+    {
+      "id": "reapi-now",
+      "displayName": "Now",
+      "description": "Get the current date and time in ISO format",
+      "noOfParams": 0,
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    },
+    {
+      "id": "reapi-now-timestamp",
+      "displayName": "Now Timestamp",
+      "description": "Get the current date and time as a timestamp",
+      "noOfParams": 0,
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    }
+  ],
+  "hooks": [
+    {
+      "id": "reapi-modify-response-data",
+      "displayName": "Modify Response Data",
+      "description": "Modify the response data",
+      "type": "AFTER_RESPONSE",
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    },
+    {
+      "id": "reapi-modify-request-params",
+      "displayName": "Modify Request Params",
+      "description": "Modify the request params",
+      "type": "BEFORE_REQUEST",
+      "enabled": true,
+      "tested": true,
+      "deprecated": false
+    }
+  ],
+  "utilities": [
+    {
+      "id": "StringUtils",
+      "displayName": "String Utilities",
+      "description": "String manipulation utilities",
+      "className": "StringUtils",
+      "methods": [
+        "toUpperCase"
+      ]
+    },
+    {
+      "id": "NumberUtils",
+      "displayName": "Number Utilities",
+      "description": "Number validation and manipulation utilities",
+      "className": "NumberUtils",
+      "methods": [
+        "isInt"
+      ]
+    },
+    {
+      "id": "GeoUtils",
+      "displayName": "Geo Utilities",
+      "description": "Geographic calculation utilities",
+      "className": "GeoUtils",
+      "methods": [
+        "getRandomInt",
+        "distance"
+      ]
+    },
+    {
+      "id": "DateTimeUtils",
+      "displayName": "Date Time Utilities",
+      "description": "Date and time manipulation utilities",
+      "className": "DateTimeUtils",
+      "methods": [
+        "formatDateTime",
+        "dateTimeFromTimestamp"
+      ]
+    }
+  ],
+  "testCases": [
+    {
+      "id": "validate-env-vars",
+      "name": "Validate Environment Variables",
+      "description": "Ensures required environment variables are present",
+      "tags": [
+        "smoke",
+        "validation"
+      ],
+      "priority": 1,
+      "timeout": 5000
+    },
+    {
+      "id": "validate-user-data",
+      "name": "Validate User Data",
+      "description": "Validates user data from environment variables",
+      "tags": [
+        "validation",
+        "user"
+      ],
+      "priority": 2,
+      "timeout": 5000
+    },
+    {
+      "id": "api-health-check",
+      "name": "API Health Check",
+      "description": "Checks if the API server is responding",
+      "tags": [
+        "smoke",
+        "api",
+        "health"
+      ],
+      "priority": 1,
+      "timeout": 10000
+    },
+    {
+      "id": "api-authenticated-request",
+      "name": "Authenticated API Request",
+      "description": "Makes an authenticated request using $auth headers",
+      "tags": [
+        "api",
+        "auth"
+      ],
+      "priority": 2,
+      "timeout": 10000
+    },
+    {
+      "id": "api-login-credentials",
+      "name": "Login with Credentials",
+      "description": "Tests login endpoint with credentials from $vars and $secrets",
+      "tags": [
+        "api",
+        "auth",
+        "login"
+      ],
+      "priority": 2,
+      "timeout": 10000
+    }
+  ]
+}
