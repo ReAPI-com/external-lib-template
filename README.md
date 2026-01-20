@@ -10,49 +10,67 @@ Here's the high-level workflow to create and use your own external library:
 
 1. **Clone** - Clone this template repository
 2. **Modify** - Add your custom functions, assertions, value generators, and hooks
-3. **Build** - Run `npm run build` to generate the bundle
-4. **Publish** - Publish to npm, or upload to your own server
-5. **Register** - Add the URL to ReAPI and enable the library
+3. **Configure** - Set up `reapi.config.json` with your component ID
+4. **Build & Sync** - Run `npm run publish:reapi` to build and sync to ReAPI
 
-Once registered, your library is globally available in all ReAPI scripts!
+Once synced, your library is globally available in all ReAPI scripts!
 
-> **Note:** ReAPI currently only supports **public URLs**. The library files must be accessible without authentication.
+### Using ReAPI CLI (Recommended)
+
+The easiest way to publish your library is using the ReAPI CLI:
+
+```bash
+# One command to build and sync
+npm run publish:reapi
+
+# Or separately
+npm run build
+npm run sync
+```
+
+This automatically uploads your library to ReAPI's CDN and registers the metadata.
 
 ## Key Files Overview
 
 Before diving into implementation, familiarize yourself with these essential files:
 
-1. `src/index.ts`
+1. `reapi.config.json` ⭐ **NEW**
+   - Configuration for ReAPI CLI sync
+   - Contains `componentId` (get this from ReAPI platform)
+   - Contains `libName` (your library's global namespace)
+
+2. `src/index.ts`
    - Central export file
    - Manages global type declarations and exports
    - Defines the structure of your library's public API
 
-2. `src/_support/global.d.ts`
+3. `src/_support/global.d.ts`
    - Contains core type declarations
    - Defines global interfaces and types
    - Essential for TypeScript integration
 
-3. `rollup.config.js`
+4. `rollup.config.js`
    - Configures bundle generation
    - Defines your library's global namespace (e.g., `CustomLib`)
    - Manages build optimization settings
 
-4. `dts.config.json`
+5. `dts.config.json`
    - Controls TypeScript declaration bundling
    - Manages type declaration dependencies
    - Configures type definition output
 
-5. `package.json`
+6. `package.json`
    - Defines package name and version
    - Manages dependencies
    - Controls build and test scripts
 
-The build process generates two essential output files in the `dist` directory:
+The build process generates three output files in the `dist` directory:
 
 - `bundle.umd.js`: The bundled JavaScript code that includes all dependencies
 - `bundle.d.ts`: The TypeScript declaration file that includes all type dependencies
+- `metadata.json`: Auto-generated metadata for assertions, generators, hooks, utilities, and test cases
 
-These two files are required to deploy your library to the cloud and register it with ReAPI.
+These files are used by the ReAPI CLI to sync your library to the platform.
 
 ## Implementation Guide
 
@@ -173,208 +191,158 @@ This configuration:
    git init
    ```
 
-2. **Configure your package name** in `package.json`:
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Update the bundle name** (`CustomLib`) to your unique identifier in:
+   - `reapi.config.json` - the `libName` field
+   - `rollup.config.js` - the `output.name` field
+   - `src/index.ts` - the global declaration
+
+4. **Configure ReAPI sync** in `reapi.config.json`:
 
    ```json
    {
-     "name": "@your-npm-username/my-reapi-lib",
-     "version": "1.0.0",
-     "description": "My custom ReAPI library"
+     "componentId": "YOUR_COMPONENT_ID_HERE",
+     "libName": "MyLibName"
    }
    ```
 
-   > Use your npm username as a scope to ensure uniqueness
+   Get the `componentId` from the ReAPI platform when you create a new external library component.
 
-3. **Update the bundle name** (`CustomLib`) to your unique identifier in:
-   - `rollup.config.js` - the `output.name` field
-   - `src/index.ts` - the global declaration
-   - `src/_support/global.d.ts` - the global interface
+5. **Add your code** in `src/`
 
-4. **Add your code** in `src/`
+6. **Build and sync**:
 
-5. **Build**:
    ```bash
-   npm install
-   npm run build
+   # Set your API key
+   export REAPI_API_KEY="your-api-key"
+
+   # Build and sync to ReAPI
+   npm run publish:reapi
    ```
 
 The built library will be available in the `dist/` directory:
 
-- `bundle.umd.js`: Your bundled library (this is what runs in ReAPI)
+- `bundle.umd.js`: Your bundled library (runs in ReAPI)
 - `bundle.d.ts`: TypeScript declarations (provides intellisense in ReAPI editor)
+- `metadata.json`: Auto-generated component metadata
 
 ## Publishing and Deployment
 
-### Step 1: Create an npm Account (First Time Only)
+### Option A: Using ReAPI CLI (Recommended) ⭐
 
-If you don't have an npm account, create one:
+The simplest way to publish your library directly to ReAPI:
 
-1. Go to [npmjs.com/signup](https://www.npmjs.com/signup)
-2. Fill in your details (username, email, password)
-3. Verify your email address
-
-### Step 2: Login to npm
-
-Open your terminal and login:
-
-```bash
-npm login
-```
-
-You'll be prompted for:
-
-- Username
-- Password
-- Email (will be public)
-- One-time password (if 2FA enabled)
-
-### Step 3: Choose a Unique Package Name
-
-npm package names must be globally unique. Update `package.json`:
+#### Step 1: Configure `reapi.config.json`
 
 ```json
 {
-  "name": "@your-username/my-reapi-lib",
-  "version": "1.0.0"
+  "componentId": "YOUR_COMPONENT_ID_HERE",
+  "libName": "CustomLib"
 }
 ```
 
-**Naming options:**
+- `componentId`: Get this from the ReAPI platform when you create a new external library component
+- `libName`: Must match the name in `rollup.config.js`
 
-| Format               | Example            | Notes                                                       |
-| -------------------- | ------------------ | ----------------------------------------------------------- |
-| Scoped (recommended) | `@yourname/my-lib` | Uses your npm username as scope, easier to get unique names |
-| Unscoped             | `my-reapi-lib`     | Must be globally unique, harder to find available names     |
-
-**Tips for choosing a name:**
-
-- Use your npm username or organization as a scope: `@yourname/lib-name`
-- Add a prefix: `reapi-mycompany-utils`
-- Check availability: `npm search your-package-name`
-
-### Step 4: Build Your Library
+#### Step 2: Set Your API Key
 
 ```bash
+export REAPI_API_KEY="your-api-key-here"
+```
+
+Get your API key from ReAPI platform settings.
+
+#### Step 3: Build and Sync
+
+```bash
+# Build and sync in one command
+npm run publish:reapi
+
+# Or separately
 npm run build
+npm run sync
 ```
 
-This generates:
+That's it! Your library is now live on ReAPI.
 
-- `dist/bundle.umd.js` - The bundled JavaScript
-- `dist/bundle.d.ts` - TypeScript declarations
-
-**Only these files will be published** (source code stays private).
-
-### Step 5: Publish to npm
+#### CLI Options
 
 ```bash
-# For scoped packages (recommended)
+# Sync with explicit API key
+npx -y @reapi/cli@latest sync --api-key "your-key"
+
+# Dry run (preview without uploading)
+npx -y @reapi/cli@latest sync --dry-run
+
+# Force sync even if no changes
+npx -y @reapi/cli@latest sync --force
+
+# Sync a specific folder
+npx -y @reapi/cli@latest sync ./path/to/lib
+```
+
+#### Publishing Updates
+
+Simply run `npm run publish:reapi` again. The CLI uses hash-based caching to skip unchanged builds:
+
+```bash
+npm run publish:reapi
+# Output: "No changes detected. Already synced."
+```
+
+Use `--force` to sync anyway.
+
+---
+
+### Option B: Using npm (Manual)
+
+If you prefer to host on npm and use CDN URLs:
+
+#### Step 1: Create an npm Account (First Time Only)
+
+1. Go to [npmjs.com/signup](https://www.npmjs.com/signup)
+2. Fill in your details and verify your email
+
+#### Step 2: Login and Publish
+
+```bash
+npm login
+npm run build
 npm publish --access public
-
-# For unscoped packages
-npm publish
 ```
 
-**First publish?** You might see:
+#### Step 3: Get CDN URLs
 
-```
-npm ERR! 403 You must verify your email before publishing
-```
-
-→ Check your email and verify your npm account.
-
-**Name taken?** You'll see:
-
-```
-npm ERR! 403 Package name too similar to existing package
-```
-
-→ Choose a different name in `package.json`.
-
-### Step 6: Get Your CDN URLs
-
-After publishing, your library is available via CDN. Wait 1-2 minutes, then use:
-
-**unpkg (recommended):**
+After publishing, use unpkg or jsDelivr:
 
 ```
 JS:    https://unpkg.com/@your-username/my-lib@1.0.0/dist/bundle.umd.js
 Types: https://unpkg.com/@your-username/my-lib@1.0.0/dist/bundle.d.ts
 ```
 
-**jsDelivr (alternative):**
-
-```
-JS:    https://cdn.jsdelivr.net/npm/@your-username/my-lib@1.0.0/dist/bundle.umd.js
-Types: https://cdn.jsdelivr.net/npm/@your-username/my-lib@1.0.0/dist/bundle.d.ts
-```
-
-> **Important:** Always use specific version numbers (e.g., `@1.0.0`), not `@latest`.
-
-### Step 7: Register in ReAPI
+#### Step 4: Register in ReAPI
 
 1. Navigate to ReAPI's external library management UI
-2. Add your library with the CDN URLs from Step 6
+2. Add your library with the CDN URLs
 3. Enable the library
-4. **Reload the ReAPI web page** to load the new library
+4. Reload the ReAPI web page
 
-### Publishing Updates
+---
 
-When you make changes:
+### Option C: Self-Hosting
 
-1. Update the version in `package.json`:
-   ```json
-   {
-     "version": "1.0.1"
-   }
-   ```
-2. Rebuild and publish:
+Host the built files on your own server:
 
-   ```bash
-   npm run build
-   npm publish --access public
-   ```
-
-3. Update the version in your ReAPI library URLs
-
-### What Gets Published?
-
-Only the `dist/` folder is published to npm. Your source code stays private:
-
-```
-Published to npm:          NOT published:
-├── dist/                  ├── src/           (your source code)
-│   ├── bundle.umd.js      ├── node_modules/
-│   └── bundle.d.ts        ├── tests/
-└── package.json           └── ...
-```
-
-### Troubleshooting
-
-| Issue                                  | Solution                               |
-| -------------------------------------- | -------------------------------------- |
-| "Package name too similar"             | Choose a more unique name, use a scope |
-| "You must verify your email"           | Check inbox, click verification link   |
-| "Cannot publish over existing version" | Bump version number in package.json    |
-| "404 on unpkg"                         | Wait 1-2 minutes for CDN to propagate  |
-| "Forbidden - scoped package"           | Add `--access public` flag             |
-
-### Alternative: Self-Hosting
-
-If you prefer not to use npm, you can host the built files on your own server:
-
-1. Build your library: `npm run build`
+1. Build: `npm run build`
 2. Upload `dist/bundle.umd.js` and `dist/bundle.d.ts` to any publicly accessible server
 3. Use your server URLs when registering in ReAPI
 
-Examples of self-hosting options:
-
-- Your own web server (e.g., `https://assets.yourcompany.com/libs/my-lib/bundle.umd.js`)
-- Cloud storage with public access (AWS S3, Google Cloud Storage, Azure Blob)
-- GitHub Pages
-- Any CDN or static file hosting service
-
-> **Requirement:** The URLs must be publicly accessible without authentication.
+Examples: AWS S3, Google Cloud Storage, GitHub Pages, or your own web server.
 
 ## Usage in ReAPI Scripts
 
