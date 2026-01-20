@@ -14,7 +14,9 @@
     "build": "npm run clean && npm run generate && rollup -c && pnpm build:type",
     "build:type": "dts-bundle-generator --config dts.config.json",
     "test": "vitest",
-    "serve": "npx http-server dist -p 8080 --cors -o"
+    "serve": "npx http-server dist -p 8080 --cors -o",
+    "sync": "npx -y @reapi/cli@latest sync",
+    "publish:reapi": "npm run build && npm run sync"
   },
   "publishConfig": {
     "access": "public"
