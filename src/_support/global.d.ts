@@ -216,6 +216,77 @@ declare global {
    */
   const $auth: ExternalTestCaseAuth
 
+  // ============================================================================
+  // LOGGING AND API REPORTING
+  // ============================================================================
+
+  /**
+   * Log level for test case execution logs
+   */
+  type ExternalTestCaseLogLevel = 'info' | 'warn' | 'error' | 'debug'
+
+  /**
+   * Log a message during test case execution.
+   * Logs are collected and displayed in the test results UI.
+   *
+   * @param level - Log level: 'info' | 'warn' | 'error' | 'debug'
+   * @param message - The log message
+   * @param data - Optional additional data to log (will be serialized)
+   *
+   * @example
+   * $log('info', 'Starting test')
+   * $log('debug', 'Request payload', { userId: 123 })
+   * $log('error', 'Unexpected response', response)
+   */
+  function $log(level: ExternalTestCaseLogLevel, message: string, data?: any): void
+
+  /**
+   * API request/response report structure
+   */
+  interface ApiRequestReport {
+    /** Optional name/label for this request (e.g., 'Get User Profile') */
+    name?: string
+    request: {
+      method: string
+      url: string
+      headers?: Record<string, string>
+      body?: any
+    }
+    response: {
+      status: number
+      statusText: string
+      headers?: Record<string, string>
+      body?: any
+    }
+    /** Request duration in milliseconds */
+    duration?: number
+  }
+
+  /**
+   * Report an API request/response pair during test case execution.
+   * Useful for tracking all HTTP calls made during the test.
+   * Reports are collected and displayed in the test results UI.
+   *
+   * @param report - The API request/response report
+   *
+   * @example
+   * const start = Date.now()
+   * const response = await fetch(url, { method: 'GET', headers })
+   * const body = await response.json()
+   *
+   * $reportApiRequest({
+   *   name: 'Get User Profile',
+   *   request: { method: 'GET', url, headers },
+   *   response: {
+   *     status: response.status,
+   *     statusText: response.statusText,
+   *     body
+   *   },
+   *   duration: Date.now() - start
+   * })
+   */
+  function $reportApiRequest(report: ApiRequestReport): void
+
   /**
    * Definition for a test case.
    * Test cases are functions that perform API calls and assertions.
